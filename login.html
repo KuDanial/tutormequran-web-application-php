@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In - TutorMeQuran</title>
+
+  <!-- SEO & Description -->
+  <meta name="description" content="Secure login to your TutorMeQuran account. Access your personalized dashboard for booking classes, verifying certificates, or supervising the platform.">
+
+  <!-- FontAwesome & App Stylesheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="portal-page">
+
+  <!-- Full Page Center Auth Wrapper -->
+  <main class="auth-page">
+    <div class="auth-card">
+
+      <!-- Logo and Header -->
+      <div class="auth-logo-wrapper">
+        <a href="index.html">
+          <img src="assets/img/TutorMeQuran_LOGO.png" alt="TutorMeQuran Logo" class="auth-logo">
+        </a>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Student, tutor and administrator access</p>
+      </div>
+
+      <!-- Segmented Role Selector (FR2 & User Roles Toggle) -->
+      <div class="form-group"><label class="form-label" for="login-role-choice">Account role</label><select id="login-role-choice" name="accountRoleType" class="form-control"><option>Student</option><option>Tutor</option><option>Admin</option></select></div>
+
+      <!-- Form -->
+      <form id="login-form"><button type="submit" disabled hidden aria-hidden="true"></button>
+        <!-- Hidden input storing selected role -->
+        <input type="hidden" id="login-role" value="student">
+
+        <!-- Username Input -->
+        <div class="form-group">
+          <label for="username" class="form-label">Username or Email Address</label>
+          <div class="form-input-wrapper">
+            <i class="fas fa-user input-icon" aria-hidden="true"></i>
+            <input type="text" id="username" name="accountUsername" class="form-control" placeholder="Username or email" required>
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="password" class="form-label">Password</label>
+          <div class="form-input-wrapper">
+            <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+            <input type="password" id="password" name="accountPassword" class="form-control" placeholder="Enter your password" required>
+
+          </div>
+        </div>
+
+        <!-- Checkbox & Forgot link -->
+        <div class="form-group flex-between" style="margin-bottom: 2rem;">
+          <div class="form-checkbox-wrapper">
+            <input type="checkbox" id="remember-me" class="form-checkbox">
+            <label for="remember-me" class="checkbox-label">Remember me</label>
+          </div>
+          <a href="help.html" class="checkbox-label" style="color: var(--primary); font-weight: 600;">Forgot Password?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="button" class="btn btn-primary btn-block" id="login-submit-btn">
+          Log In <i class="fas fa-sign-in-alt"></i>
+        </button>
+      </form>
+
+      <!-- Onboarding Link -->
+      <p class="checkbox-label" style="text-align: center; margin-top: 2rem;">
+        Don't have an account yet? <a href="register.html">Sign Up (Register)</a>
+      </p>
+
+      <!-- Static demo entry points; no authentication is performed. -->
+      <section aria-label="Explore the interface demo" style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <p class="checkbox-label" style="text-align: center; margin-bottom: .75rem;">Explore the interface demo · no sign-in is performed</p>
+        <div class="portal-actions" style="justify-content: center;">
+          <a href="student/student-dashboard.html" class="btn btn-outline btn-sm">Student</a>
+          <a href="tutor/tutor-dashboard.html" class="btn btn-outline btn-sm">Tutor application</a>
+          <a href="tutor/tutor-dashboard-verified.html" class="btn btn-outline btn-sm">Verified tutor</a>
+          <a href="admin/admin-dashboard.html" class="btn btn-outline btn-sm">Admin</a>
+        </div>
+      </section>
+
+      <!-- Back Link -->
+      <a href="index.html" class="btn btn-text btn-block btn-sm" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-left"></i> Back to Landing Page
+      </a>
+
+    </div>
+  </main>
+
+  <!-- App Script -->
+
+</body>
+</html>
