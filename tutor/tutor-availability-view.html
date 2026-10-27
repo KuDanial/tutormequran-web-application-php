@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Availability Detail - TutorMeQuran</title><meta name="description" content="Manage your TutorMeQuran activity."><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="../assets/css/style.css"></head><body class="portal-page tutor-workspace"><a href="#main-content" class="portal-skip">Skip to content</a>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Availability Detail - TutorMeQuran</title><meta name="description" content="Manage your TutorMeQuran activity."><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="../assets/css/site-contact.css"><script src="../assets/js/site-contact.js" defer></script></head><body class="portal-page tutor-workspace"><a href="#main-content" class="portal-skip">Skip to content</a>
 <nav class="navbar" id="navbar">
     <div class="container nav-container">
       <a href="../index.html" class="logo-link" id="nav-logo">
@@ -44,13 +44,13 @@
 <h1>Availability Detail</h1>
 <p>Manage your TutorMeQuran activity.</p>
 </div>
-<div class="portal-actions"><a class="btn btn-primary btn-sm" href="tutor-availability-edit.html">Edit</a><a class="btn btn-outline btn-sm" href="tutor-availability.html">Back</a>
+<div class="portal-actions"><a class="btn btn-primary btn-sm" data-edit-slot href="tutor-availability-edit.html">Edit</a><a class="btn btn-outline btn-sm" href="tutor-availability.html">Back</a>
 </div>
-</header>
+</header><p data-availability-message role="status"></p>
 
   <section class="portal-card ">
 <h2>Lesson Slot</h2>
-<dl class="portal-details">
+<dl class="portal-details" data-availability-detail>
 <div>
 <dt>Date</dt>
 <dd>21 October 2026</dd>
@@ -62,6 +62,10 @@
 <div>
 <dt>End Time</dt>
 <dd>9:00 PM</dd>
+</div>
+<div>
+<dt>Duration</dt>
+<dd>1 hour</dd>
 </div>
 <div>
 <dt>Mode</dt>
@@ -141,4 +145,4 @@
     <div class="container footer-bottom">
       <p>&copy; 2026 TutorMeQuran. CSP600 Final Year Project · Malaysia. Interface prototype.</p>
     </div>
-  </footer><script src="../assets/js/student-workspace.js"></script><script src="../assets/js/tutor-workflow.js"></script><script src="../assets/js/action-confirmation.js"></script></body></html>
+  </footer><script src="../assets/js/student-workspace.js"></script><script src="../assets/js/tutor-workflow.js"></script><script src="../assets/js/action-confirmation.js"></script><script src="../assets/js/lesson-slots.js"></script><script src="../assets/js/availability.js"></script></body></html>
