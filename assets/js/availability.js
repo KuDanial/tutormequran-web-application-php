@@ -1,6 +1,24 @@
 (() => {
   const api = window.LessonSlots;
   const form = document.querySelector('[data-availability-form]');
+  // PHP pages own persistence and validation. Preserve only the preview here.
+  if (document.querySelector('[data-availability-server]')) {
+    if (form && api) {
+      const fields = form.elements;
+      fields.availabilityDate.min = api.today();
+      const update = () => {
+        const start = fields.startTime.value;
+        const durationMinutes = Number(fields.durationMinutes.value);
+        fields.endTime.value = api.endTime(start, durationMinutes);
+        const slot = { start, end: fields.endTime.value, durationMinutes };
+        form.querySelector('[data-slot-summary]').textContent = `${api.range(slot)} / ${api.durationLabel(slot)} / MYT`;
+      };
+      fields.startTime.addEventListener('change', update);
+      fields.durationMinutes.addEventListener('change', update);
+      update();
+    }
+    return;
+  }
   const requested = new URLSearchParams(location.search).get('slot');
   const error = document.querySelector('[data-availability-message]');
   let slots;
@@ -41,7 +59,7 @@
       if (!form.reportValidity()) return;
       try {
         api.save({ date: fields.availabilityDate.value, start: fields.startTime.value, end: fields.endTime.value, durationMinutes: Number(fields.durationMinutes.value), mode: fields.classType.value, status: fields.availabilityStatus.value }, editing ? requested : null);
-        location.assign('tutor-availability.html');
+        location.assign('tutor-availability.php');
       } catch (failure) { error.textContent = failure.message; }
     });
   }
@@ -55,7 +73,7 @@
       ['View', ...(slot.status !== 'Booked' ? ['Edit'] : [])].forEach((action) => {
         const link = document.createElement('a');
         link.className = 'btn btn-outline btn-sm'; link.textContent = action;
-        link.href = `tutor-availability-${action.toLowerCase()}.html?slot=${encodeURIComponent(slot.id)}`;
+        link.href = `tutor-availability-${action.toLowerCase()}.php?slot=${encodeURIComponent(slot.id)}`;
         cell.append(link, ' ');
       });
     });

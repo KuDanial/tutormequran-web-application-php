@@ -1,0 +1,1 @@
+<footer class="admin-footer">© 2026 TutorMeQuran · Administration · CSP600</footer>

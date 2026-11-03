@@ -1,0 +1,10 @@
+/* Match the existing dropdown links when logout becomes a native POST button. */
+.profile-menu-panel > .auth-logout { display: contents; }
+.profile-menu-panel > .auth-logout > button {
+  padding: .65rem .75rem; font: inherit; font-size: .85rem;
+  border: 0; border-radius: var(--radius-sm); background: transparent;
+  display: flex; align-items: center; gap: .7rem; text-align: left; cursor: pointer;
+}
+.profile-menu-panel > .auth-logout > button:hover,
+.profile-menu-panel > .auth-logout > button:focus-visible { background: var(--primary-light); }
+.student-menu-panel > .auth-logout > .student-menu-logout { min-height: 44px; margin-top: .5rem; font-size: .95rem; }

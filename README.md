@@ -25,7 +25,7 @@
 
 TutorMeQuran is a CSP600 academic project at Universiti Teknologi MARA (UiTM). It brings tutor discovery, certificate review, lesson booking and payment tracking into one interface for students, tutors and administrators.
 
-This repository currently contains the **static HTML, CSS and JavaScript prototype**. Selected interactions work locally in the browser; PHP and database integration are planned. Displayed accounts, bookings and reports use sample data.
+This repository currently contains the **PHP-rendered interface prototype (Phase 1)**. Shared PHP includes render the approved interface. Selected interactions work locally in the browser; authentication, database integration and form processing are still future work. Displayed accounts, bookings and reports use sample data.
 
 ## Features
 
@@ -51,15 +51,14 @@ Tutor acknowledgement and admin verification are separate stages. DuitNow transf
 
 ## Run locally
 
-Clone the repository and serve it with Python 3:
+Serve the project with PHP (XAMPP PHP is suitable):
 
-```bash
-git clone https://github.com/KuDanial/tutormequran-web-application.git
-cd tutormequran-web-application
-python -m http.server 8000 --bind 127.0.0.1
+```powershell
+cd C:\Users\aster\Documents\GitHub\tutormequran-web-application-php
+& C:\xampp\php\php.exe -S 127.0.0.1:8000 -t .
 ```
 
-Open [localhost:8000](http://localhost:8000). No build step or package installation is required. An editor's local HTTP server also works.
+Open [localhost:8000/index.php](http://localhost:8000/index.php). No build step, database or package installation is required. A static Python/Live Server cannot execute PHP. Alternatively serve the project with XAMPP Apache under its document root; `.htaccess` selects `index.php` as the directory entry point.
 
 Use the same browser tab when checking related student and tutor booking screens: selected prototype actions share `sessionStorage` in that tab. They do not sync between users, tabs or devices. A local HTTP server provides more consistent browser storage behaviour than opening files directly.
 
@@ -67,19 +66,20 @@ Use the same browser tab when checking related student and tutor booking screens
 
 | Page | File |
 | --- | --- |
-| Home | [index.html](index.html) |
-| Browse tutors | [tutors.html](tutors.html) |
-| Registration | [register.html](register.html) |
-| Student dashboard | [student/student-dashboard.html](student/student-dashboard.html) |
-| Tutor application status | [tutor/tutor-dashboard.html](tutor/tutor-dashboard.html) |
-| Verified tutor dashboard | [tutor/tutor-dashboard-verified.html](tutor/tutor-dashboard-verified.html) |
-| Admin dashboard | [admin/admin-dashboard.html](admin/admin-dashboard.html) |
-| Reports | [report/report-dashboard.html](report/report-dashboard.html) |
+| Home | [index.php](index.php) |
+| Browse tutors | [tutors.php](tutors.php) |
+| Registration | [register.php](register.php) |
+| Student dashboard | [student/student-dashboard.php](student/student-dashboard.php) |
+| Tutor application status | [tutor/tutor-dashboard.php](tutor/tutor-dashboard.php) |
+| Verified tutor dashboard | [tutor/tutor-dashboard-verified.php](tutor/tutor-dashboard-verified.php) |
+| Admin dashboard | [admin/admin-dashboard.php](admin/admin-dashboard.php) |
+| Reports | [report/report-dashboard.php](report/report-dashboard.php) |
 
 ## Repository structure
 
 ```text
-tutormequran-web-application/
+tutormequran-web-application-php/
+├── includes/        Shared PHP head, role navigation, footers and helpers
 ├── assets/
 │   ├── css/          Shared styles
 │   ├── img/          Logos, screenshots and other images
@@ -89,8 +89,8 @@ tutormequran-web-application/
 ├── admin/            Administration pages
 ├── report/           Reporting dashboard
 ├── docs/             Workflow and implementation notes
-├── index.html        Public landing page
-├── register.html     Student registration and tutor application
+├── index.php        Public landing page
+├── register.php     Student registration and tutor application
 └── INTERFACE-GUIDE.md
 ```
 
@@ -102,8 +102,18 @@ The PHP phase will need authentication, role and record ownership checks, databa
 
 Extra pages preserve the earlier tutor setup and publishing flow for reference. The main registration and application dashboard use **Apply → Admin verification**, with teaching details and visibility managed through Edit Profile.
 
+## Phase 1 conversion checks
+
+```powershell
+python -X utf8 scripts/audit_php_conversion.py --php C:/xampp/php/php.exe
+node --test tests/booking-availability.test.cjs
+```
+
+All 99 original HTML pages remain in place as frontend references. Active links and JavaScript use PHP routes; the HTML copies share those updated scripts and are not an isolated runnable backup. The existing `scripts/audit_frontend.py` still audits the HTML references. The PHP audit renders active pages, compares their markup with the references, and checks links, assets and frontend regressions.
+
 ## Project documentation
 
+- [PHP conversion handoff](docs/php-conversion-handoff.md)
 - [Interface guide and page map](INTERFACE-GUIDE.md)
 - [Tutor booking and payment workflow](docs/tutor-workflow.md)
 - [Booking progress, action confirmations and PHP migration](docs/booking-progress-and-actions.md)

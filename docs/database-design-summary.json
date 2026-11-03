@@ -1,0 +1,185 @@
+{
+  "proposal_status": "approved_business_rules_pending_sql_implementation",
+  "tables": [
+    {"name":"users","primary_key":["user_id"],"foreign_keys":{},"unique":[["username"],["email"]]},
+    {"name":"students","primary_key":["student_id"],"foreign_keys":{"user_id":"users.user_id"},"unique":[["user_id"]]},
+    {"name":"tutors","primary_key":["tutor_id"],"foreign_keys":{"user_id":"users.user_id","displayed_certificate_id,tutor_id":"certificates.certificate_id,tutor_id"},"unique":[["user_id"]]},
+    {"name":"admins","primary_key":["admin_id"],"foreign_keys":{"user_id":"users.user_id"},"unique":[["user_id"]]},
+    {"name":"certificates","primary_key":["certificate_id"],"foreign_keys":{"tutor_id":"tutors.tutor_id","replaces_certificate_id":"certificates.certificate_id","reviewed_by_admin_id":"admins.admin_id"},"unique":[["certificate_id","tutor_id"],["replaces_certificate_id"]]},
+    {"name":"languages","primary_key":["language_id"],"foreign_keys":{},"unique":[["name"]]},
+    {"name":"tutor_languages","primary_key":["tutor_id","language_id"],"foreign_keys":{"tutor_id":"tutors.tutor_id","language_id":"languages.language_id"},"unique":[]},
+    {"name":"lesson_focuses","primary_key":["focus_id"],"foreign_keys":{},"unique":[["name"]]},
+    {"name":"tutor_lesson_focuses","primary_key":["tutor_id","focus_id"],"foreign_keys":{"tutor_id":"tutors.tutor_id","focus_id":"lesson_focuses.focus_id"},"unique":[]},
+    {"name":"availability_slots","primary_key":["slot_id"],"foreign_keys":{"tutor_id":"tutors.tutor_id"},"unique":[["tutor_id","starts_at"],["slot_id","tutor_id"]]},
+    {"name":"bookings","primary_key":["booking_id"],"foreign_keys":{"student_id":"students.student_id","tutor_id":"tutors.tutor_id","slot_id,tutor_id":"availability_slots.slot_id,tutor_id","cancelled_by_user_id":"users.user_id"},"unique":[["occupied_slot_id"]]},
+    {"name":"booking_change_requests","primary_key":["change_request_id"],"foreign_keys":{"booking_id":"bookings.booking_id","requested_by_user_id":"users.user_id","responded_by_user_id":"users.user_id","original_slot_id":"availability_slots.slot_id","requested_slot_id":"availability_slots.slot_id"},"unique":[["pending_booking_id"]]},
+    {"name":"payments","primary_key":["payment_id"],"foreign_keys":{"booking_id":"bookings.booking_id","verified_by_admin_id":"admins.admin_id","reviewed_by_admin_id":"admins.admin_id"},"unique":[["booking_id"]]},
+    {"name":"payment_transfers","primary_key":["transfer_id"],"foreign_keys":{"payment_id":"payments.payment_id"},"unique":[]},
+    {"name":"payment_submissions","primary_key":["submission_id"],"foreign_keys":{"transfer_id":"payment_transfers.transfer_id","uploaded_by_user_id":"users.user_id","reviewed_by_admin_id":"admins.admin_id"},"unique":[["transfer_id","attempt_number"]]},
+    {"name":"messages","primary_key":["message_id"],"foreign_keys":{"booking_id":"bookings.booking_id","sender_user_id":"users.user_id"},"unique":[]},
+    {"name":"message_attachments","primary_key":["attachment_id"],"foreign_keys":{"message_id":"messages.message_id"},"unique":[]},
+    {"name":"feedback","primary_key":["feedback_id"],"foreign_keys":{"booking_id":"bookings.booking_id"},"unique":[["booking_id"]]},
+    {"name":"notifications","primary_key":["notification_id"],"foreign_keys":{"recipient_user_id":"users.user_id","booking_id":"bookings.booking_id","certificate_id":"certificates.certificate_id"},"unique":[]},
+    {"name":"faqs","primary_key":["faq_id"],"foreign_keys":{"created_by_admin_id":"admins.admin_id","updated_by_admin_id":"admins.admin_id"},"unique":[]},
+    {"name":"faq_keywords","primary_key":["faq_id","keyword"],"foreign_keys":{"faq_id":"faqs.faq_id"},"unique":[]},
+    {"name":"profile_field_settings","primary_key":["role","field_key"],"foreign_keys":{"updated_by_admin_id":"admins.admin_id"},"unique":[]},
+    {"name":"support_requests","primary_key":["request_id"],"foreign_keys":{"requester_user_id":"users.user_id","booking_id":"bookings.booking_id","handled_by_admin_id":"admins.admin_id"},"unique":[]}
+  ],
+  "conditional_unique_keys": {
+    "bookings.occupied_slot_id": "Generated slot_id for requested, accepted, completed or closed; otherwise NULL.",
+    "booking_change_requests.pending_booking_id": "Generated booking_id only for pending requests; otherwise NULL."
+  },
+  "statuses": {
+    "user_role": ["student","tutor","admin"],
+    "account_status": ["active","inactive"],
+    "tutor_application_derived": ["pending","approved","rejected"],
+    "certificate_status": ["pending","approved","rejected","superseded"],
+    "certificate_purpose": ["initial","application_correction","higher_qualification"],
+    "qualification_level": ["ijazah","advanced_ijazah","diploma","bachelor","master","doctorate"],
+    "profile_visibility": ["draft","private","public"],
+    "teaching_and_slot_mode": ["online","physical","both"],
+    "booking_class_mode": ["online","physical"],
+    "availability_status_stored": ["available","unavailable"],
+    "availability_occupancy_derived": ["reserved","booked","past"],
+    "booking_status": ["requested","accepted","rejected","completed","cancelled","closed"],
+    "cancellation_timing": ["early","same_day","after_lesson_date"],
+    "booking_change_status": ["pending","accepted","rejected","withdrawn"],
+    "payment_status": ["pending","underpaid","rejected","reupload_required","verified"],
+    "payment_issue_type": ["not_received","amount_mismatch","reference_mismatch"],
+    "message_type": ["text","attachment","location"],
+    "faq_status": ["active","inactive"],
+    "support_category": ["billing","attendance","other"],
+    "payment_submission_tutor_status": ["awaiting","received","issue"],
+    "payment_submission_admin_status": ["pending","valid","rejected","reupload_required"],
+    "support_status": ["open","resolved"]
+  },
+  "derived_not_stored": [
+    "Tutor application outcome",
+    "Five UI steps: Booking, Arrange, Class, Payment, Verified",
+    "Availability occupancy/past",
+    "Outstanding amount",
+    "Average rating",
+    "Notification/message read state from read_at"
+  ],
+  "unresolved_decisions": [],
+  "previous_table_count": 25,
+  "final_table_count": 23,
+  "simplification": {
+    "removed": [
+      "auth_tokens"
+    ],
+    "merged": {
+      "payment_reviews": "Current tutor/admin evidence decisions in payment_submissions; current/final admin aggregate decision in payments."
+    },
+    "retained_payment_tables": [
+      "payments",
+      "payment_transfers",
+      "payment_submissions"
+    ],
+    "retained_small_tables": [
+      "booking_change_requests",
+      "support_requests",
+      "faq_keywords",
+      "profile_field_settings"
+    ]
+  },
+  "payment_rules": {
+    "expected_amount": "bookings.expected_amount; never changed by a receipt",
+    "current_submission": "Highest attempt_number per transfer_id",
+    "contributing_submission": "Current version with tutor_status=received AND admin_status=valid",
+    "valid_total": "Sum amount_paid once per genuine transfer, never across receipt versions",
+    "correction": "New attempt under SAME transfer_id; old version and reviews retained but excluded; both reviews restart for that transfer",
+    "top_up": "NEW transfer_id for a genuine additional payment; student enters its own amount, not a cumulative total",
+    "final_verification": "Admin only; both class completions, exact expected valid total, resolved current evidence, matching evidence_revision; atomically close booking",
+    "overpayment": "Manual Admin/support; no automated refund, excess revenue or reversal",
+    "review_history": "Receipt version history with latest tutor/admin decisions per version; no event-by-event review log"
+  },
+  "integrity_rules": {
+    "account": "One role/subtype; username and email globally UNIQUE; IC not UNIQUE",
+    "student_overlap": "Lock student row before tutor/slots; reject intersecting requested/accepted bookings across all tutors",
+    "slot_occupancy": "UNIQUE generated occupied_slot_id plus locked validation",
+    "reschedule": "Counterpart consent before lesson; recheck availability/student overlap; no target holds; preserve before/after agreement and immutable original rate",
+    "duration_price": "Original hourly_rate_snapshot multiplied by target duration",
+    "arrangement": "Both timestamps; material changes increment agreement_version and reset both",
+    "mode": "Both directions with counterpart acceptance and tutor support; mode alone does not change fee",
+    "admin_correction": "Marked before/after change record with admin actor/reason; no normal edits of closed/verified transactions",
+    "feedback": "UNIQUE booking_id; booking student, integer rating 1-5, both completion timestamps; payment verification not required",
+    "certificate": "Retain multiple approved certificates; one selected owned approved certificate; no automatic ranking/expiry/revocation",
+    "public_listing": "Completed eligible profile may stay Public with zero future slots",
+    "deletion": "Deactivate accounts; retain historical transactions",
+    "support": "Authenticated student/tutor only; optional owned booking; admin support management does not authorize private chat",
+    "sessions": "Standard PHP sessions; manual admin provisioning; logged-in password change; reset-email/Remember Me deferred"
+  },
+  "report_rules": {
+    "comparison": "Count bookings by tutor_id; monthly filter bookings.created_at; include all statuses unless explicitly filtered",
+    "composition": "Count payments by status; monthly filter payments.created_at; never count receipt versions",
+    "storage_tables": false
+  },
+  "upload_limits": {
+    "unit": "MB = 1048576 bytes",
+    "certificate": {
+      "types": [
+        "pdf",
+        "jpg",
+        "png"
+      ],
+      "max_mb": 5
+    },
+    "payment_receipt": {
+      "types": [
+        "pdf",
+        "jpg",
+        "png"
+      ],
+      "max_mb": 5
+    },
+    "profile_picture": {
+      "types": [
+        "jpg",
+        "png"
+      ],
+      "max_mb": 5
+    },
+    "duitnow_qr": {
+      "types": [
+        "jpg",
+        "png"
+      ],
+      "max_mb": 5
+    },
+    "chat_attachment": {
+      "types": [
+        "safe_documents",
+        "safe_images",
+        "safe_videos"
+      ],
+      "max_mb": 10
+    },
+    "support_image": {
+      "types": [
+        "jpg",
+        "png"
+      ],
+      "max_mb": 5
+    }
+  },
+  "resolved_decisions": {
+    "Q01": "Mutual participant consent, marked admin corrections, original-rate duration recalculation, no temporary holds",
+    "Q02": "Both mode directions, counterpart consent, tutor capability, no mode-only price change, physical venue agreement",
+    "Q03": "Both arrangement timestamps; reset on material accepted changes",
+    "Q04": "Malaysia cancellation timing; manual exceptions; no automatic fees/refunds/expiry; no student overlap",
+    "Q05": "Manual support/admin disputes and overpayments; closed/verified normally read-only; no reversal accounting",
+    "Q06": "Multiple approved certificates retained, one displayed qualification; admin approval; no ranking/expiry/revocation",
+    "Q07": "Three-table partial-payment and versioned-receipt model; final admin verification",
+    "Q08": "One dashboard; booking comparison/payment composition by record dates; no report tables",
+    "Q09": "Global UNIQUE username/email; one role; IC not UNIQUE",
+    "Q10": "Basic registration then teaching completeness; relational languages/tags; fixed settings; Public with zero slots",
+    "Q11": "5 MB certificate/receipt/profile/QR/support; 10 MB safe chat; protected file paths/metadata",
+    "Q12": "Deactivate instead of historical user deletion; retain records; no retention/anonymization automation",
+    "Q13": "Manual admins, PHP sessions, logged-in password changes; remove auth_tokens and defer reset delivery/Remember Me",
+    "Q14": "Authenticated support only; no unrestricted admin private-chat access",
+    "Q15": "One rating 1-5 per booking after both completions, without requiring verified payment"
+  },
+  "blocking_technical_questions": []
+}
+

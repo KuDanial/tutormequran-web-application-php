@@ -29,7 +29,7 @@
       const usable = available(slot);
       const item = document.createElement(form ? 'label' : usable ? 'a' : 'button');
       item.className = 'slot-btn lesson-slot-option' + (usable ? '' : ' booked');
-      if (!form) { if (usable) item.href = 'student/student-booking-addNew.html?slot=' + encodeURIComponent(slot.id); else { item.type = 'button'; item.disabled = true; } }
+      if (!form) { if (usable) item.href = 'student/student-booking-addNew.php?slot=' + encodeURIComponent(slot.id); else { item.type = 'button'; item.disabled = true; } }
       if (form) {
         const radio = document.createElement('input'); radio.type = 'radio'; radio.name = 'slotId'; radio.value = slot.id; radio.required = true; radio.disabled = !usable; radio.checked = selection === slot.id;
         item.append(radio);
@@ -74,7 +74,7 @@
       const slot = api.read().find((entry) => entry.id === form.elements.slotId?.value);
       if (!slot || !available(slot) || slot.date < api.day(week) || slot.date > api.day(new Date(+week + 6 * 86400000))) throw new Error('This lesson is unavailable. Please choose another slot.');
       if (slot.mode !== 'Both' && slot.mode !== form.elements.classType.value) throw new Error('Choose the class option offered for this slot.');
-      location.assign('student-booking-view.html');
+      location.assign('student-booking-view.php');
     } catch (failure) { message.textContent = failure.message; }
   });
   render();

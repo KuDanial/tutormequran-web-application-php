@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================
-  // 3. Login Role Selection Toggle (login.html)
+  // 3. Login Role Selection Toggle (login.php)
   // ==========================================
   const loginSegments = document.querySelectorAll('#login-role-selector .segment-btn');
   const loginRoleInput = document.getElementById('login-role');
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================
-  // 4. Registration Role Toggle (register.html)
+  // 4. Registration Role Toggle (register.php)
   // ==========================================
   const registerSegments = document.querySelectorAll('#register-role-selector .segment-btn');
   const registerRoleInput = document.getElementById('register-role');
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================
-  // 5. Ijazah File Upload Drag-and-Drop (register.html FR8)
+  // 5. Ijazah File Upload Drag-and-Drop (register.php FR8)
   // ==========================================
   const dropzone = document.getElementById('ijazah-dropzone');
   const fileInput = document.getElementById('ijazah-upload');
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 8. Form Submission Handlers (Mock)
   // ==========================================
   const loginForm = document.getElementById('login-form');
-  if (loginForm) {
+  if (loginForm && !loginForm.hasAttribute('data-auth-form')) {
     loginForm.addEventListener('submit', function (e) {
       e.preventDefault();
       const role = document.getElementById('login-role').value;
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   const registerForm = document.getElementById('registration-form');
-  if (registerForm) {
+  if (registerForm && !registerForm.hasAttribute('data-auth-form')) {
     registerForm.addEventListener('submit', function (e) {
       e.preventDefault();
       const role = document.getElementById('register-role').value;
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => {
         showToast('Registration complete! Welcome to TutorMeQuran.', 'success');
         setTimeout(() => {
-          window.location.href = 'login.html';
+          window.location.href = 'login.php';
         }, 1500);
       }, 2000);
     });
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (searchForm) {
     searchForm.addEventListener('submit', function (e) {
-      const isLandingPage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || !window.location.pathname.includes('.html');
+      const isLandingPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/' || !window.location.pathname.includes('.php');
       
       if (isLandingPage) {
         e.preventDefault();
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         showToast('Redirecting to tutor listings...', 'info');
         setTimeout(() => {
-          window.location.href = 'tutors.html?' + queryParams.toString();
+          window.location.href = 'tutors.php?' + queryParams.toString();
         }, 300);
       } else {
         e.preventDefault();
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  const isTutorsPage = window.location.pathname.endsWith('tutors.html');
+  const isTutorsPage = window.location.pathname.endsWith('tutors.php');
   if (isTutorsPage) {
     const urlParams = new URLSearchParams(window.location.search);
     const paramSearch = urlParams.get('search');
@@ -539,9 +539,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================
-  // 10. Dynamic Tutor Detail & Scheduling Loader (tutor-detail.html)
+  // 10. Dynamic Tutor Detail & Scheduling Loader (tutor-detail.php)
   // ==========================================
-  const isDetailPage = window.location.pathname.endsWith('tutor-detail.html');
+  const isDetailPage = window.location.pathname.endsWith('tutor-detail.php');
   if (isDetailPage) {
     const urlParams = new URLSearchParams(window.location.search);
     const tutorId = urlParams.get('id') || "1"; // Default to Fatimah if no ID

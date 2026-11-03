@@ -1,5 +1,7 @@
 # TutorMeQuran project handoff
 
+Phase 1 update (2 November 2026): the active application now uses PHP pages and shared includes. Read [PHP Conversion Handoff](php-conversion-handoff.md) first for setup and validation. The notes below describe the earlier frontend baseline; retained HTML files are references, and Python HTTP serving does not execute the active PHP application.
+
 Updated 15 October 2026. This repository is a static HTML/CSS/JavaScript prototype for the TutorMeQuran CSP600 project. The supplied proposal remains the product boundary; the later workflow additions below are interface refinements requested during development.
 
 ## Product scope

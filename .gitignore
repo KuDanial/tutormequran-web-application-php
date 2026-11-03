@@ -1,0 +1,30 @@
+# Python-generated artifacts
+__pycache__/
+*.py[cod]
+
+# Local secrets (commit only a placeholder example)
+.env
+.env.*
+!.env.example
+
+# Runtime logs and OS/editor artifacts
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Private/runtime storage if created locally; required source assets stay visible
+/storage/
+/uploads/
+/tutormequran-private-storage/
+/sessions/
+/logs/
+/tmp/
+/temp/
+/database/dumps/
+*.sql.gz
+*.sql.zip

@@ -1,0 +1,6 @@
+<?php
+// Each page supplies its metadata and root-relative asset prefix.
+// $pageHead is trusted, page-authored markup (the existing homepage style block).
+?>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title><?= tmq_escape($pageTitle) ?></title><meta name="description" content="<?= tmq_escape($pageDescription) ?>"><?php if (!empty($pageKeywords)): ?><meta name="keywords" content="<?= tmq_escape($pageKeywords) ?>"><?php endif; ?><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="<?= tmq_escape($assetPrefix) ?>assets/css/style.css"><?php foreach ($extraStyles ?? [] as $stylesheet): ?><link rel="stylesheet" href="<?= tmq_escape($assetPrefix . $stylesheet) ?>"><?php endforeach; ?><?= $pageHead ?? '' ?><link rel="stylesheet" href="<?= tmq_escape($assetPrefix) ?>assets/css/site-contact.css"><script src="<?= tmq_escape($assetPrefix) ?>assets/js/site-contact.js" defer></script><link rel="stylesheet" href="<?= tmq_escape($assetPrefix) ?>assets/css/auth.css"></head>

@@ -94,26 +94,26 @@
   bind('[data-booking-reject]', (form) => {
     const reason = form.elements.reason;
     if (!reason.value.trim()) { reason.setCustomValidity('Please give a reason for rejecting this booking.'); reason.reportValidity(); return; }
-    if (!state.decision && save({ decision: 'rejected', reason: reason.value.trim() }, form)) location.assign('tutor-booking-rejected.html');
+    if (!state.decision && save({ decision: 'rejected', reason: reason.value.trim() }, form)) location.assign('tutor-booking-rejected.php');
   });
   document.querySelector('[data-booking-reject] textarea')?.addEventListener('input', (event) => event.target.setCustomValidity(''));
   bind('[data-class-complete]', (form) => {
     if (state.decision !== 'accepted') { form.querySelector('[data-workflow-error]').textContent = 'Accept this booking before recording class completion.'; return; }
-    if (save({ tutorCompleted: true }, form)) location.assign('tutor-booking-completed.html');
+    if (save({ tutorCompleted: true }, form)) location.assign('tutor-booking-completed.php');
   });
   bind('[data-student-class-complete]', (form) => {
     if (state.decision !== 'accepted') { form.querySelector('[data-workflow-error]').textContent = 'Wait for your tutor to accept the booking before completing the class.'; return; }
-    if (save({ studentCompleted: true }, form)) location.assign('student-booking-completed.html');
+    if (save({ studentCompleted: true }, form)) location.assign('student-booking-completed.php');
   });
   bind('[data-payment-confirm]', (form) => {
     if (!hasReceipt || confirmed || !form.elements.receiptChecked.checked) return;
     if (Number(receipt.amount) !== 40) { form.querySelector('[data-workflow-error]').textContent = 'The uploaded amount does not match RM 40.00. Report a payment issue before confirming.'; return; }
-    if (save({ paymentReceived: true, paymentIssue: null, acknowledgedAt: new Date().toISOString() }, form)) location.assign('tutor-payment-received.html');
+    if (save({ paymentReceived: true, paymentIssue: null, acknowledgedAt: new Date().toISOString() }, form)) location.assign('tutor-payment-received.php');
   });
   bind('[data-payment-issue]', (form) => {
     const explanation = form.elements.tutorPaymentRemark.value.trim();
     if (!explanation) { form.querySelector('[data-workflow-error]').textContent = 'Please explain the payment issue.'; return; }
-    if (save({ paymentIssue: { type: form.elements.tutorPaymentIssue.value, explanation }, paymentReceived: false }, form)) location.assign('tutor-payment-view.html');
+    if (save({ paymentIssue: { type: form.elements.tutorPaymentIssue.value, explanation }, paymentReceived: false }, form)) location.assign('tutor-payment-view.php');
   });
   bind('[data-student-receipt]', (form) => {
     const error = form.querySelector('[data-workflow-error]');
@@ -129,7 +129,7 @@
     reader.onerror = () => { error.textContent = 'The receipt could not be read. Please choose it again.'; submit.disabled = false; };
     reader.onload = () => {
       const entry = {name:file.name, data:reader.result, amount:Number(form.elements.payAmount.value), date:form.elements.payDate.value};
-      if (save({receipt:entry, paymentReceived:false, paymentIssue:null}, form)) location.assign('student-payment-view.html');
+      if (save({receipt:entry, paymentReceived:false, paymentIssue:null}, form)) location.assign('student-payment-view.php');
       submit.disabled = false;
     };
     reader.readAsDataURL(file);

@@ -1,19 +1,19 @@
 # TutorMeQuran interface guide
 
-This revision follows the supplied CSP600 proposal (sections 1.5, 1.7, 3.2.3, 3.3.3 and 3.4.2) and the two ERD screenshots. It remains a **static HTML/CSS prototype**. There is no PHP backend, database or server authentication yet. Shared JavaScript provides interface interactions and selected local workflow state; see docs/tutor-workflow.md and docs/booking-progress-and-actions.md for the current behaviour and PHP migration notes.
+This revision follows the supplied CSP600 proposal (sections 1.5, 1.7, 3.2.3, 3.3.3 and 3.4.2) and the two ERD screenshots. Phase 1 now renders the approved interface through **PHP pages and shared includes**. There is no database, server authentication or backend processing yet. See [PHP conversion handoff](docs/php-conversion-handoff.md) for the active structure and checks; the original HTML files remain as references. Shared JavaScript provides interface interactions and selected local workflow state; see docs/tutor-workflow.md and docs/booking-progress-and-actions.md for the current behaviour and PHP migration notes.
 
 ## Page map
 
-1. Start at `index.html`, then browse `tutors.html` and `tutor-detail.html`.
-2. Open `register.html#tutor-application`. A tutor applies with personal/account details and one certificate. Pricing and biography are absent from registration.
-3. Open `tutor/tutor-dashboard.html`: Nur Hana is awaiting verification. The two-step progress bar shows Apply complete and Admin verification current. Profile setup and publishing are not application steps.
-4. `tutor/tutor-application-rejected.html` and `tutor/tutor-application-approved.html` retain the correction and approval outcomes. PHP should select the appropriate application state from the database; users do not choose a state through preview buttons.
-5. Use `tutor/tutor-profile-edit.html` for teaching details and `#profile-visibility` on that same page for Draft, Private or Public visibility. The older setup, ready-to-publish, visibility, draft-view and private-view pages are restored as extra reference pages. The main dashboard and registration retain their simplified two-step application progress. Profile view/edit are the shared pages for these states in PHP.
-6. Use `tutor/tutor-dashboard-verified.html` for Muhammad Farhan's established tutor account. This is a separate sample tutor with historical bookings. Profile editing, availability, payments and visibility are available.
-7. Open `student/student-booking-view.html` and `student/student-payment-view.html` to follow booking TMQ-1024.
-8. Open `tutor/tutor-payment-view.html`, then the confirmation or issue screen. `tutor/tutor-payment-received.html` previews an acknowledgement awaiting admin review.
-9. Open `admin/admin-dashboard.html`. The sidebar leads to application, payment, booking, user, FAQ and report management. `admin/manage-payments-confirmed.html` previews the point at which an admin can approve an acknowledged receipt.
-10. Review `report/report-dashboard.html`: one page containing comparison and composition reports only.
+1. Start at `index.php`, then browse `tutors.php` and `tutor-detail.php`.
+2. Open `register.php#tutor-application`. A tutor applies with personal/account details and one certificate. Pricing and biography are absent from registration.
+3. Open `tutor/tutor-dashboard.php`: Nur Hana is awaiting verification. The two-step progress bar shows Apply complete and Admin verification current. Profile setup and publishing are not application steps.
+4. `tutor/tutor-application-rejected.php` and `tutor/tutor-application-approved.php` retain the correction and approval outcomes. PHP should select the appropriate application state from the database; users do not choose a state through preview buttons.
+5. Use `tutor/tutor-profile-edit.php` for teaching details and `#profile-visibility` on that same page for Draft, Private or Public visibility. The older setup, ready-to-publish, visibility, draft-view and private-view pages are restored as extra reference pages. The main dashboard and registration retain their simplified two-step application progress. Profile view/edit are the shared pages for these states in PHP.
+6. Use `tutor/tutor-dashboard-verified.php` for Muhammad Farhan's established tutor account. This is a separate sample tutor with historical bookings. Profile editing, availability, payments and visibility are available.
+7. Open `student/student-booking-view.php` and `student/student-payment-view.php` to follow booking TMQ-1024.
+8. Open `tutor/tutor-payment-view.php`, then the confirmation or issue screen. `tutor/tutor-payment-received.php` previews an acknowledgement awaiting admin review.
+9. Open `admin/admin-dashboard.php`. The sidebar leads to application, payment, booking, user, FAQ and report management. `admin/manage-payments-confirmed.php` previews the point at which an admin can approve an acknowledged receipt.
+10. Review `report/report-dashboard.php`: one page containing comparison and composition reports only.
 
 The footer's **Prototype · sample data** disclosure links the role previews. Action buttons deliberately do not persist changes. Navigation labelled as a preview does not simulate saving or approval. Radio buttons, file selection, date inputs, FAQ accordions and the registration tabs use native HTML/CSS behaviour.
 
@@ -51,7 +51,7 @@ The original attribute spellings below are taken from the screenshots. Labels in
 | Account | `accountID`, `accountUsername`, `accountPassword`, `accountRoleType` | Account references in private profiles; username/password in registration and login; role registration panels and login selector. Passwords are never displayed in account records. |
 | Student | `studID`, `studFName`, `studLName`, `studICNum`, `studPhone`, `studEmail`, `studAddress`, `accountID` | Student registration, student profile view/edit, admin student view/edit. IC is collected at registration and masked in sample private views. |
 | Tutor | `tutorID`, `tutorFName`, `tutorLName`, `tutorICNum`, `tutorPhone`, `tutorEmail`, `tutorAddress`, `hourlyRate`, `tutorStatus`, `accountID` | Tutor application, applicant account, verified account, teaching profile, admin tutor pages. Hourly rate is only editable in verified-state screens. Public profiles omit IC, account ID and private address. |
-| Admin | `adminID`, `adminFName`, `adminLName`, `adminEmail`, `accountID` | `admin/admin-profile.html`, admin identity in the sidebar, certificate reviewer references. |
+| Admin | `adminID`, `adminFName`, `adminLName`, `adminEmail`, `accountID` | `admin/admin-profile.php`, admin identity in the sidebar, certificate reviewer references. |
 | Certificates | `certificatesID`, `certificateName`, `certificateDescription`, `certificateYear`, `certificateStatus`, `tutorID`, `adminID` | Registration certificate fields, replacement form, applicant review, verified certificate view and admin review. Pending applications show the reviewer as unassigned. |
 | Booking | `bookingID`, `bookingTimestamp`, `bookingStatus`, `appointmentDate`, `startTime`, `endTime`, `classType`, `studID`, `tutorID` | Booking details for all roles show the booking timestamp, participant references, start/end times, date and class type. Student/tutor/admin edit and cancellation screens are provided. |
 | Payment | `payID`, `payAmount`, `payDate`, `payStatus`, `payReceipt`, `bookingID` | Student upload/status, tutor receipt/confirmation, admin verification. The payment ID and booking reference remain visible throughout. |
@@ -89,14 +89,14 @@ Do not overload `tutorStatus` with Public/Private/Draft, or `payStatus` with tut
 
 - Student/tutor rolebars are replaced by native HTML profile dropdowns, including the previous workspace links, Dashboard, My Profile, Change Password and Logout. Admin retains its sidebar and receives the same dropdown pattern. Logout navigates to the login preview; it performs no session operation.
 - Personal forms collect a required profile-picture file, gender, date of birth, phone, state and address. Student and tutor registration include the new picture/gender/DOB fields. Tutor teaching forms include teaching area, mode, languages, rate, biography and sample lesson tags with an inert Add Lesson button. Optional tutor socials are limited to Facebook, Instagram, LinkedIn, X/Twitter and TikTok.
-- Approved qualifications are read-only. `tutor/tutor-certificate-upload.html` represents a higher-qualification submission. `tutor/tutor-certificate-replace.html` retains the pending-application correction screen. New qualifications do not overwrite the existing approval while review is pending.
+- Approved qualifications are read-only. `tutor/tutor-certificate-upload.php` represents a higher-qualification submission. `tutor/tutor-certificate-replace.php` retains the pending-application correction screen. New qualifications do not overwrite the existing approval while review is pending.
 - Password forms are previews for users changing their own passwords. Admin user-edit screens offer password-reset assistance; an administrator is not asked to know another user's current password.
 - Availability warnings are placeholders. Do not hard-code today's date in HTML: later code should use Malaysia's current calendar date for the input minimum and enforce it independently on the server, alongside end-after-start and overlap checks.
 - PDF, Excel and print buttons are interface-only. No export file or print action is generated yet.
 - Payment reconciliation shows expected, paid and outstanding amounts. RM4 paid toward RM40 leaves RM36 outstanding. An evidence correction does not itself transfer funds. Missing payment stays unverified; invalid evidence can be rejected. A backend may need multiple immutable receipt/transfer entries attached to one booking-payment aggregate to track a top-up without losing the original evidence.
 - Cancellation before the booking date records Cancelled by Student or Cancelled by Tutor. On that date in Malaysia time it records Late Cancellation plus the cancelling party. Payment disputes go to admin review; no automatic fee or refund is implemented.
-- A physical-to-online request remains pending until accepted by the tutor. Rejection preserves the original arrangement, with rescheduling/cancellation discussed through chat. `student/student-chat.html` and `tutor/tutor-chat.html` contain a shared sample physical booking TMQ-1025. It is explicitly separate from existing online booking TMQ-1024.
-- `admin/admin-settings.html` previews editable-field controls. Approved qualifications, certificates and verification status cannot be unlocked by these checkboxes. Settings do not actually change permissions or other forms in this static version.
+- A physical-to-online request remains pending until accepted by the tutor. Rejection preserves the original arrangement, with rescheduling/cancellation discussed through chat. `student/student-chat.php` and `tutor/tutor-chat.php` contain a shared sample physical booking TMQ-1025. It is explicitly separate from existing online booking TMQ-1024.
+- `admin/admin-settings.php` previews editable-field controls. Approved qualifications, certificates and verification status cannot be unlocked by these checkboxes. Settings do not actually change permissions or other forms in this static version.
 
 For the next ERD revision, add profile photo/gender/DOB, teaching area/languages/lesson tags, optional social URLs, certificate-submission history, cancellation party/timestamp, mode-change request state, booking conversation/message records and editable-field configuration. Actual password changes and permission enforcement remain backend work.
 
@@ -112,7 +112,7 @@ For the next ERD revision, add profile photo/gender/DOB, teaching area/languages
 
 ## Validation
 
-Static checks passed for all 77 HTML pages: nesting, duplicate IDs, input labels, headings, relative links, local assets and anchors, and absence of scripts/form-processing actions. Latest Chrome frame checks passed for the 71 registration, tutor-detail and workspace pages at 1280px and 375px, including page overflow and open profile-menu boundaries. Existing Google Fonts and Font Awesome remain external style dependencies.
+Historical frontend validation before the Phase 1 conversion: static checks passed for the then-current 77 HTML pages: nesting, duplicate IDs, input labels, headings, relative links, local assets and anchors, and absence of scripts/form-processing actions. Latest Chrome frame checks passed for the 71 registration, tutor-detail and workspace pages at 1280px and 375px, including page overflow and open profile-menu boundaries. Existing Google Fonts and Font Awesome remain external style dependencies.
 
 The original landing-page social and policy links still use placeholder `#` destinations; real social profiles and policy text were not supplied. All application flow links resolve to local pages.
 
@@ -120,10 +120,10 @@ The original landing-page social and policy links still use placeholder `#` dest
 
 The original Apply -> Admin review -> Set up profile -> Publish flow remains available in these extra pages:
 
-- `tutor/tutor-profile-setup.html` ? initial teaching profile setup.
-- `tutor/tutor-profile-ready.html` ? completed profile and publishing choice.
-- `tutor/tutor-profile-visibility.html` ? visibility controls.
-- `tutor/tutor-profile-draft.html` ? draft profile state.
-- `tutor/tutor-profile-private.html` ? private profile state.
+- `tutor/tutor-profile-setup.php` ? initial teaching profile setup.
+- `tutor/tutor-profile-ready.php` ? completed profile and publishing choice.
+- `tutor/tutor-profile-visibility.php` ? visibility controls.
+- `tutor/tutor-profile-draft.php` ? draft profile state.
+- `tutor/tutor-profile-private.php` ? private profile state.
 
 For PHP, the current profile view/edit pages remain the main workflow; these extras illustrate the earlier flow.
