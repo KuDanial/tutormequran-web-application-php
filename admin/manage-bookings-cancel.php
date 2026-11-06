@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
+require __DIR__ . '/../includes/booking-page.php';
 $assetPrefix = '../';
-$pageTitle = 'Cancel booking TMQ-1024 - TutorMeQuran';
-$pageDescription = 'Review the booking and record the reason for cancellation.';
+$pageTitle = 'Exceptional booking cancellation - TutorMeQuran';
+$pageDescription = 'Record a manual booking cancellation.';
 $currentPage = '';
 $adminPrefix = '';
 $workspaceLabel = 'Administration';
@@ -14,78 +15,7 @@ $showAdminSettings = true;
 <div class="admin-body">
 <?php require __DIR__ . '/../includes/admin-header.php'; ?>
 <main id="main-content" class="container portal-main">
-<header class="portal-heading">
-<div><span class="section-subtitle">Operations workspace</span>
-<h1>Cancel booking TMQ-1024</h1>
-<p>Review the booking and record the reason for cancellation.</p>
-</div>
-</header>
-<section class="portal-card ">
-<h2>Booking details</h2>
-<dl class="portal-details">
-<div>
-<dt>Booking ID</dt>
-<dd>TMQ-1024</dd>
-</div>
-<div>
-<dt>Booked On</dt>
-<dd>10 October 2026, 10:15 AM</dd>
-</div>
-<div>
-<dt>Student</dt>
-<dd>Ahmad Hakimi · ST-001</dd>
-</div>
-<div>
-<dt>Tutor</dt>
-<dd>Muhammad Farhan · TU-001</dd>
-</div>
-<div>
-<dt>Appointment Date</dt>
-<dd>20 October 2026</dd>
-</div>
-<div>
-<dt>Start Time</dt>
-<dd>8:00 PM (MYT)</dd>
-</div>
-<div>
-<dt>End Time</dt>
-<dd>9:00 PM (MYT)</dd>
-</div>
-<div>
-<dt>Class Type</dt>
-<dd>Online</dd>
-</div>
-<div>
-<dt>Booking Status</dt>
-<dd><span class="portal-badge good">Confirmed</span>
-</dd>
-</div>
-<div>
-<dt>Lesson Fee</dt>
-<dd>RM 40.00 · 1 hour</dd>
-</div>
-</dl>
-</section>
-<section class="portal-card ">
-<h2>Cancellation</h2>
-<form class="portal-form">
-<button type="submit" hidden disabled aria-hidden="true">
-</button>
-<div class="portal-fields">
-<div class="form-group">
-<label for="f-cancellationReason" class="form-label">Reason</label>
-<textarea id="f-cancellationReason" name="cancellationReason" class="form-control" rows="4">
-</textarea>
-</div>
-</div>
-<div class="portal-actions">
-<button type="button" class="btn action-danger" data-confirm="Cancel this booking? This releases the lesson slot. Any payment or refund issue must be reviewed separately."><span class="action-warning-icon" aria-hidden="true">⚠</span> Confirm Cancellation</button><a href="manage-bookings-view.php" class="btn btn-outline btn-sm">Back</a>
-</div>
-</form>
-</section>
-<aside class="flow-notice info"><strong>Payment follow-up</strong>
-<p>A cancellation does not refund a DuitNow transfer. Review any payment issue separately.</p>
-</aside><section class="portal-card"><h2>Cancellation policy</h2><ul class="clean-list"><li>If Student cancels early, booking status becomes Cancelled by Student.</li><li>If Tutor cancels early, booking status becomes Cancelled by Tutor.</li><li>If cancellation happens on the booking day, it should be marked as Late Cancellation.</li><li>Admin can review dispute cases if payment issue happens.</li></ul><p class="field-help">Early means before the booking date; the day before is early. On the booking date (Malaysia time), record Late Cancellation and who cancelled. No automatic refund or cancellation fee is applied by this interface.</p></section>
+<?php require __DIR__ . '/../includes/booking-detail-content.php'; ?>
 </main>
 <?php require __DIR__ . '/../includes/admin-footer.php'; ?>
 </div>

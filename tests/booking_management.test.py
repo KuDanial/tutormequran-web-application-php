@@ -149,7 +149,7 @@ def main():
             check(tutor.request(tl,{'decision':'accept','id':foreign_id})[0]==405,'Tutor list read-only')
             check(row(bid)==accepted,'read-only attempts do not mutate')
             for body in [student.request(view(sv,bid))[1],tutor.request(view(tv,bid))[1],admin.request(view(av,bid))[1]]:
-                check('booking-session.php' not in body and 'bookings-cancel.php' not in body ,'deferred completion/cancellation links remain removed')
+                check('payment-upload.php' not in body and 'bookings-closed.php' not in body ,'deferred payment/closing links remain removed')
             # A requested lesson in the past cannot be accepted (fixture adjustment only).
             past_slot=slot(tid,12);past_id=create_booking(past_slot)
             past_start=(epoch-timedelta(days=10)).strftime('%Y-%m-%d %H:%M:%S');past_end=(epoch-timedelta(days=10)+timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')

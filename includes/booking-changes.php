@@ -29,13 +29,18 @@ function tmq_change_history(array $actor, int $id): array
 
 function tmq_change_eligible(array $booking): bool
 {
-    return $booking['status']==='accepted' && tmq_slot_local($booking['starts_at'])>new DateTimeImmutable('now',new DateTimeZone('UTC'));
+    return $booking['status']==='accepted' && empty($booking['student_completed_at']) && empty($booking['tutor_completed_at'])
+        && tmq_slot_local($booking['starts_at'])>new DateTimeImmutable('now',new DateTimeZone('UTC'));
 }
 
 // Locator reads happen before BEGIN. All write paths acquire the same parent/slot locks
 // before any booking/change locks, then revalidate locator values and participation.
-function tmq_change_lock(PDO $db, array $actor, array $before, int $targetId, bool $requireBothActive = true): array
+function tmq_change_lock(PDO $db, array $actor, array $before, int $targetId, bool $requireBothActive = true, bool $allowAdmin = false): array
 {
+    $admin=$allowAdmin && $actor['role']==='admin';
+    if (!$admin && !in_array($actor['role'],['student','tutor'],true)) {
+        http_response_code(403); throw new DomainException('Student or Tutor access required.');
+    }
     $q=$db->prepare('SELECT * FROM students WHERE student_id=? FOR UPDATE');
     $q->execute([$before['student_id']]); $student=$q->fetch();
     $q=$db->prepare('SELECT * FROM tutors WHERE tutor_id=? FOR UPDATE');
@@ -47,12 +52,12 @@ function tmq_change_lock(PDO $db, array $actor, array $before, int $targetId, bo
     $q=$db->prepare('SELECT * FROM bookings WHERE booking_id=? FOR UPDATE');
     $q->execute([$before['booking_id']]); $booking=$q->fetch();
     if (!$booking || $booking['student_id']!==$before['student_id'] || $booking['tutor_id']!==$before['tutor_id']
-        || (int)($actor['role']==='student'?$student['user_id']:$tutor['user_id'])!==(int)$actor['user_id']) { tmq_booking_not_found(); }
+        || (!$admin && (int)($actor['role']==='student'?$student['user_id']:$tutor['user_id'])!==(int)$actor['user_id'])) { tmq_booking_not_found(); }
     if ($booking['slot_id']!==$before['slot_id']) { tmq_change_conflict('This booking has already been updated. Reload its details.'); }
     // First consistent account reads occur after locks, including after lock waits.
     $su=tmq_profile_user((int)$student['user_id']); $tu=tmq_profile_user((int)$tutor['user_id']);
-    $actingUser=$actor['role']==='student'?$su:$tu;
-    if ($actingUser['account_status']!=='active' || ($requireBothActive && ($su['account_status']!=='active' || $tu['account_status']!=='active'))
+    $actingUser=$admin?tmq_profile_user((int)$actor['user_id']):($actor['role']==='student'?$su:$tu);
+    if ($actingUser['role']!==$actor['role'] || $actingUser['account_status']!=='active' || ($requireBothActive && ($su['account_status']!=='active' || $tu['account_status']!=='active'))
         || $su['role']!=='student' || $tu['role']!=='tutor') {
         tmq_change_conflict('Both participant accounts must be active.');
     }

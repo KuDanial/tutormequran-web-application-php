@@ -24,10 +24,11 @@ function tmq_booking_records(array $actor, ?int $id = null, string $status = '')
     }
     return tmq_profile_rows('SELECT b.booking_id,b.student_id,b.tutor_id,b.slot_id,b.starts_at,b.ends_at,b.class_mode,b.lesson_focus_summary,b.notes,b.hourly_rate_snapshot,b.expected_amount,b.status,b.created_at,b.decision_at,b.rejection_reason,
         b.venue_address,b.meeting_platform,b.meeting_url,b.student_arranged_at,b.tutor_arranged_at,b.agreement_version,
+        b.student_completed_at,b.tutor_completed_at,b.cancelled_by_user_id,b.cancelled_at,b.cancellation_reason,b.cancellation_timing,cu.role AS cancelled_by_role,
         CONCAT(su.first_name,\' \',su.last_name) AS student_name,
         COALESCE(NULLIF(t.display_name,\'\'),CONCAT(tu.first_name,\' \',tu.last_name)) AS tutor_name
         FROM bookings b JOIN students s ON s.student_id=b.student_id JOIN users su ON su.user_id=s.user_id
-        JOIN tutors t ON t.tutor_id=b.tutor_id JOIN users tu ON tu.user_id=t.user_id'
+        JOIN tutors t ON t.tutor_id=b.tutor_id JOIN users tu ON tu.user_id=t.user_id LEFT JOIN users cu ON cu.user_id=b.cancelled_by_user_id'
         .($where?' WHERE '.implode(' AND ',$where):'')." ORDER BY (b.status='requested') DESC,b.starts_at DESC,b.booking_id DESC",$params);
 }
 

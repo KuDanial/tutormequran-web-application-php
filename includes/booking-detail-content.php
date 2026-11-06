@@ -1,5 +1,5 @@
 <?php if (!isset($authUser,$bookingMessage)) { http_response_code(404); exit; } ?>
-<header class="portal-heading"><div><span class="section-subtitle"><?= $bookingRole==='admin'?'Operations workspace':($bookingRole==='tutor'?'Tutor studio':'Your lesson') ?></span><h1><?= !empty($isBookingCoordination)?'Arrange your class':'Booking details' ?><?= $booking?' #'.(int)$booking['booking_id']:'' ?></h1></div></header>
+<header class="portal-heading"><div><span class="section-subtitle"><?= $bookingRole==='admin'?'Operations workspace':($bookingRole==='tutor'?'Tutor studio':'Your lesson') ?></span><h1><?= !empty($isBookingCoordination)?'Arrange your class':(!empty($isBookingCancellation)?'Cancel booking':(!empty($isBookingSession)?'Lesson session and completion':'Booking details')) ?><?= $booking?' #'.(int)$booking['booking_id']:'' ?></h1></div></header>
 <?php if($bookingMessage): ?><p role="status"><?= tmq_escape($bookingMessage) ?></p><?php endif; ?>
 <?php if($booking): ?>
 <section class="portal-card <?= $bookingRole==='tutor'?'tutor-booking-card':'' ?>"><?= tmq_booking_badge($booking['status']) ?><h2><?= tmq_escape($booking['lesson_focus_summary']?:'Quran lesson') ?></h2>
@@ -22,6 +22,7 @@ foreach($details as $label=>$value): ?><div><dt><?= tmq_escape($label) ?></dt><d
 <?php elseif($booking['status']==='accepted'): ?><p>The Tutor accepted this booking. Your lesson slot remains reserved.</p>
 <?php elseif($booking['status']==='rejected'): ?><p>The Tutor rejected this booking. This record is retained in your booking history.</p><?php endif; ?>
 <?php require __DIR__ . '/booking-arrangement-content.php'; ?>
+<?php require __DIR__ . '/booking-lifecycle-content.php'; ?>
 </section>
 <?php if(in_array($bookingRole,['student','tutor'],true)): require __DIR__ . '/booking-change-content.php'; endif; ?>
 <?php endif; ?>

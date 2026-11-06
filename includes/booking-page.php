@@ -2,15 +2,20 @@
 declare(strict_types=1);
 if (!isset($authUser) || !in_array($authUser['role'],['student','tutor','admin'],true)) { http_response_code(404); exit; }
 require_once __DIR__ . '/booking-changes.php';
+require_once __DIR__ . '/booking-cancellations.php';
+require_once __DIR__ . '/booking-completion.php';
 $bookingPage=basename($_SERVER['SCRIPT_FILENAME']);
 $bookingRole=$authUser['role'];
 $bookingListPage=['student'=>'student-bookings.php','tutor'=>'tutor-bookings.php','admin'=>'manage-bookings.php'][$bookingRole];
 $bookingDetailPage=['student'=>'student-booking-view.php','tutor'=>'tutor-booking-view.php','admin'=>'manage-bookings-view.php'][$bookingRole];
 $isBookingList=$bookingPage===$bookingListPage;
+$isBookingCancellation=$bookingPage===($bookingRole==='admin'?'manage-bookings-cancel.php':$bookingRole.'-booking-cancel.php');
+$isBookingSession=in_array($bookingRole,['student','tutor'],true) && $bookingPage===$bookingRole.'-booking-session.php';
 $booking=null; $bookingRows=[]; $bookingChanges=[]; $bookingMessage=''; $bookingStatus=tmq_input($_GET,'status');
 $bookingId=null;
 try {
-    if ($_SERVER['REQUEST_METHOD']==='POST' && ($bookingRole!=='tutor' || $bookingPage!=='tutor-booking-view.php')) {
+    if (!in_array($_SERVER['REQUEST_METHOD'],['GET','POST'],true)) { http_response_code(405); throw new DomainException('Use GET or the POST form.'); }
+    if ($_SERVER['REQUEST_METHOD']==='POST' && !$isBookingCancellation && !$isBookingSession && ($bookingRole!=='tutor' || $bookingPage!=='tutor-booking-view.php')) {
         http_response_code(405); throw new DomainException('This page is read-only.');
     }
     if (!$isBookingList) {
@@ -23,6 +28,20 @@ try {
     }
     if ($_SERVER['REQUEST_METHOD']==='POST') {
         tmq_check_csrf();
+        if ($isBookingCancellation || $isBookingSession) {
+            if ($isBookingCancellation && tmq_input($_POST,'lifecycle_action')==='cancel') {
+                tmq_cancel_booking($authUser,$bookingId,tmq_input($_POST,'reason'));
+            } elseif ($isBookingSession && tmq_input($_POST,'lifecycle_action')==='complete') {
+                tmq_confirm_completion($authUser,$bookingId,tmq_booking_id(tmq_input($_POST,'agreement_version')));
+            } else { throw new DomainException('Choose a valid booking action.'); }
+            $_SESSION['booking_lifecycle_saved']=$bookingId;
+            $destination=$bookingDetailPage;
+            if ($isBookingSession) {
+                $current=tmq_booking_record($authUser,$bookingId);
+                $destination=$bookingRole.($current['status']==='completed'?'-booking-completed.php':'-booking-session.php');
+            }
+            tmq_redirect($bookingRole.'/'.$destination.'?id='.$bookingId);
+        }
         tmq_decide_booking($authUser,$bookingId,tmq_input($_POST,'decision'),tmq_input($_POST,'reason'));
         $_SESSION['booking_decided']=$bookingId;
         tmq_redirect('tutor/tutor-booking-view.php?id='.$bookingId);
@@ -30,6 +49,9 @@ try {
     if ($isBookingList) { $bookingRows=tmq_booking_records($authUser,null,$bookingStatus); }
     if ($booking && ($_SESSION['booking_decided']??null)===$bookingId) {
         unset($_SESSION['booking_decided']); $bookingMessage='Booking decision saved.';
+    }
+    if ($booking && ($_SESSION['booking_lifecycle_saved']??null)===$bookingId) {
+        unset($_SESSION['booking_lifecycle_saved']); $bookingMessage='Booking updated.';
     }
 } catch (DomainException $error) {
     if (!in_array(http_response_code(),[403,404,405,409],true)) { http_response_code(422); }

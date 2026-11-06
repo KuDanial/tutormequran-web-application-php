@@ -229,7 +229,7 @@ def main():
             for state in ['requested','rejected','cancelled','completed','closed']:
                 sql("UPDATE bookings SET status=?,rejection_reason='Fixture',student_completed_at=UTC_TIMESTAMP(),tutor_completed_at=UTC_TIMESTAMP() WHERE booking_id=?",[state,eb])
                 check(request(eb,et)[0]==409,'ineligible '+state)
-            sql("UPDATE bookings SET status='accepted' WHERE booking_id=?",[eb])
+            sql("UPDATE bookings SET status='accepted',student_completed_at=NULL,tutor_completed_at=NULL WHERE booking_id=?",[eb])
             check(request(eb,et)[0]==303,'future original request')
             past_start=(epoch-timedelta(days=12)).strftime('%Y-%m-%d %H:%M:%S');past_end=(epoch-timedelta(days=12)+timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
             sql('UPDATE availability_slots SET starts_at=?,ends_at=? WHERE slot_id=?',[past_start,past_end,es])
