@@ -26,6 +26,14 @@ function tmq_booking_amount(string $rate, array $slot): string
     return intdiv($sen,100).'.'.str_pad((string)($sen%100),2,'0',STR_PAD_LEFT);
 }
 
+// Caller holds the Student row lock; exclude the existing booking on reschedule.
+function tmq_booking_student_overlaps(PDO $db, int $studentId, array $slot, int $exclude = 0): bool
+{
+    $q = $db->prepare("SELECT booking_id FROM bookings WHERE student_id=? AND status IN ('requested','accepted') AND starts_at < ? AND ends_at > ? AND booking_id<>? LIMIT 1 FOR UPDATE");
+    $q->execute([$studentId,$slot['ends_at'],$slot['starts_at'],$exclude]);
+    return (bool)$q->fetchColumn();
+}
+
 function tmq_create_booking(array $actor, array $input): int
 {
     if ($actor['role'] !== 'student') { throw new DomainException('Student access required.'); }
@@ -57,9 +65,7 @@ function tmq_create_booking(array $actor, array $input): int
         $q = $db->prepare('SELECT booking_id FROM bookings WHERE occupied_slot_id=? FOR UPDATE');
         $q->execute([$slotId]);
         if ($q->fetchColumn()) { throw new DomainException('This slot is no longer available. Choose another lesson.'); }
-        $q = $db->prepare("SELECT booking_id FROM bookings WHERE student_id=? AND status IN ('requested','accepted') AND starts_at < ? AND ends_at > ? LIMIT 1 FOR UPDATE");
-        $q->execute([$studentId,$slot['ends_at'],$slot['starts_at']]);
-        if ($q->fetchColumn()) { throw new DomainException('This lesson overlaps one of your active bookings.'); }
+        if (tmq_booking_student_overlaps($db,$studentId,$slot)) { throw new DomainException('This lesson overlaps one of your active bookings.'); }
         $amount = tmq_booking_amount($tutor['hourly_rate'],$slot);
         $q = $db->prepare("INSERT INTO bookings (student_id,tutor_id,slot_id,starts_at,ends_at,class_mode,notes,hourly_rate_snapshot,expected_amount,status) VALUES (?,?,?,?,?,?,?,?,?,'requested')");
         $q->execute([$studentId,$tutorId,$slotId,$slot['starts_at'],$slot['ends_at'],$mode,$notes?:null,$tutor['hourly_rate'],$amount]);

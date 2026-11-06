@@ -1,0 +1,18 @@
+<?php if (!isset($authUser,$bookingRows)) { http_response_code(404); exit; } ?>
+<header class="portal-heading"><div><span class="section-subtitle"><?= $bookingRole==='admin'?'Operations workspace':($bookingRole==='tutor'?'Tutor studio':'Your learning journey') ?></span><h1><?= $bookingRole==='admin'?'Booking management':'My Bookings' ?></h1><p><?= $bookingRole==='admin'?'Review Student and Tutor bookings.':'View your lesson requests and booking history.' ?></p></div>
+<?php if($bookingRole==='student'): ?><div class="portal-actions"><a class="btn btn-primary btn-sm" href="student-booking-addNew.php">Book a lesson</a></div><?php endif; ?></header>
+<?php if($bookingMessage): ?><p role="status"><?= tmq_escape($bookingMessage) ?></p><?php endif; ?>
+<nav class="<?= $bookingRole==='admin'?'portal-actions':'student-tabs' ?>" aria-label="Booking status"><a class="btn btn-outline btn-sm" href="<?= $bookingListPage ?>" <?= $bookingStatus===''?'aria-current="page"':'' ?>>All</a>
+<?php foreach(TMQ_BOOKING_STATUSES as $status): ?><a class="btn btn-outline btn-sm" href="<?= $bookingListPage ?>?status=<?= $status ?>" <?= $bookingStatus===$status?'aria-current="page"':'' ?>><?= ucfirst($status) ?></a><?php endforeach; ?></nav>
+<?php if($bookingRole==='admin'): ?>
+<div class="portal-table-wrap" role="region" aria-label="Bookings" tabindex="0"><table class="portal-table"><caption>Bookings</caption><thead><tr><th>Booking ID</th><th>Student</th><th>Tutor</th><th>Date</th><th>Time (MYT)</th><th>Class Type</th><th>Booking Status</th><th>Lesson Fee</th><th>Action</th></tr></thead><tbody>
+<?php foreach($bookingRows as $row): ?><tr><td><?= (int)$row['booking_id'] ?></td><td><?= tmq_escape($row['student_name']) ?></td><td><?= tmq_escape($row['tutor_name']) ?></td><td><?= tmq_escape(tmq_slot_local($row['starts_at'])->format('d M Y')) ?></td><td><?= tmq_escape(tmq_slot_local($row['starts_at'])->format('g:i A').' - '.tmq_slot_local($row['ends_at'])->format('d M g:i A')) ?></td><td><?= ucfirst($row['class_mode']) ?></td><td><?= tmq_booking_badge($row['status']) ?></td><td>RM <?= tmq_escape($row['expected_amount']) ?></td><td><a class="btn btn-outline btn-sm" href="<?= $bookingDetailPage ?>?id=<?= (int)$row['booking_id'] ?>">View</a></td></tr><?php endforeach; ?>
+<?php if(!$bookingRows): ?><tr><td colspan="9">No bookings to display.</td></tr><?php endif; ?></tbody></table></div>
+<?php else: ?>
+<section aria-label="Your bookings">
+<?php foreach($bookingRows as $row): ?><article class="portal-card"><div class="lesson-card-heading"><h2>Booking #<?= (int)$row['booking_id'] ?> &middot; <?= tmq_escape($bookingRole==='student'?$row['tutor_name']:$row['student_name']) ?></h2><?= tmq_booking_badge($row['status']) ?></div>
+<dl class="portal-details"><div><dt>Lesson</dt><dd><?= tmq_escape(tmq_booking_time($row['starts_at'])) ?></dd></div><div><dt>End</dt><dd><?= tmq_escape(tmq_booking_time($row['ends_at'])) ?></dd></div><div><dt>Mode</dt><dd><?= ucfirst($row['class_mode']) ?></dd></div><div><dt>Lesson Fee</dt><dd>RM <?= tmq_escape($row['expected_amount']) ?></dd></div></dl>
+<?php if($row['status']==='requested'): ?><p><?= $bookingRole==='tutor'?'Awaiting your decision.':'Waiting for tutor acceptance.' ?></p><?php endif; ?>
+<div class="portal-actions"><a class="btn btn-outline btn-sm" href="<?= $bookingDetailPage ?>?id=<?= (int)$row['booking_id'] ?>">View booking</a></div></article><?php endforeach; ?>
+<?php if(!$bookingRows): ?><section class="portal-card"><p>No bookings to display.</p></section><?php endif; ?></section>
+<?php endif; ?>
