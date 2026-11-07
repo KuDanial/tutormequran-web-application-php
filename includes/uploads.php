@@ -22,7 +22,7 @@ function tmq_storage_root(): string
 }
 function tmq_stored_file(string $key): string
 {
-    if (!preg_match('~\A(profiles|certificates|duitnow)/[a-f0-9]{40}\.(jpg|png|pdf)\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
+    if (!preg_match('~\A(profiles|certificates|duitnow|receipts)/[a-f0-9]{40}\.(jpg|png|pdf)\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
     $root = tmq_storage_root();
     $path = $root . '/' . $key;
     if (is_link(dirname($path)) || is_link($path)) { throw new RuntimeException('Invalid file location.'); }
@@ -46,8 +46,9 @@ function tmq_receive_upload(string $field, string $kind, bool $required = false)
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($tmp);
     $extension = strtolower(pathinfo($original,PATHINFO_EXTENSION));
     $types = ['image/jpeg'=>['jpg','jpeg'],'image/png'=>['png']];
-    if ($kind === 'certificates') { $types['application/pdf']=['pdf']; }
-    if (!isset($types[$mime]) || !in_array($extension,$types[$mime],true)) { throw new DomainException('Choose a valid JPG/PNG image' . ($kind==='certificates'?' or PDF.':'.')); }
+    $documents=in_array($kind,['certificates','receipts'],true);
+    if ($documents) { $types['application/pdf']=['pdf']; }
+    if (!isset($types[$mime]) || !in_array($extension,$types[$mime],true)) { throw new DomainException('Choose a valid JPG/PNG image' . ($documents?' or PDF.':'.')); }
     $bytes = file_get_contents($tmp);
     if (preg_match('/<\?(?:php|=)/i',$bytes)) { throw new DomainException('Executable file content is not allowed.'); }
     if ($mime === 'application/pdf') {

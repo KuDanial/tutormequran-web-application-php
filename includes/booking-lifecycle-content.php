@@ -14,7 +14,7 @@ $cancelPage=$bookingRole==='admin'?'manage-bookings-cancel.php':$bookingRole.'-b
 <h3>Lesson completion</h3><dl class="portal-details">
 <?php foreach(['student','tutor'] as $participant): ?><div><dt><?= ucfirst($participant) ?> completion confirmation</dt><dd><?= $booking[$participant.'_completed_at']?tmq_escape(tmq_booking_time($booking[$participant.'_completed_at'])):'Not confirmed' ?></dd></div><?php endforeach; ?>
 </dl><p><?= tmq_escape(tmq_completion_label($booking)) ?></p>
-<?php if($booking['status']==='completed'): ?><p>Both participants confirmed the lesson. Payment is not implemented yet; this booking is completed, not closed.</p><?php endif; ?>
+<?php if($booking['status']==='completed'): ?><p>Both participants confirmed the lesson. This booking is completed, not closed. Receipt submission does not verify payment.</p><?php if($bookingRole==='student'): ?><a class="btn btn-outline" href="student-payment-view.php?id=<?= (int)$booking['booking_id'] ?>">View payment / submit receipt</a><?php endif; ?><?php endif; ?>
 <?php if(!empty($isBookingSession)): ?>
 <?php if($booking[$bookingRole.'_completed_at']): ?><p>You have confirmed lesson completion.</p>
 <?php elseif(tmq_completion_eligible($booking)): ?>

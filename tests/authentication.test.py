@@ -195,7 +195,9 @@ def main():
                 expected='admin' if page.startswith(('admin/','report/')) else page.split('/')[0]
                 for role,browser in [('student',student),('tutor',tutor),('admin',admin)]:
                     status,body,_=browser.request(page)
-                    check(status==(200 if role==expected else 403),'role access '+role+' '+page)
+                    # The protected receipt stream requires an owned file ID; a bare URL is 404.
+                    own_status=404 if page=='student/student-payment-file.php' else 200
+                    check(status==(own_status if role==expected else 403),'role access '+role+' '+page)
                     check('Fatal error' not in body and 'Warning:' not in body,'clean response '+page)
             sql("UPDATE users SET account_status='inactive' WHERE user_id=?",[tutorid])
             check(tutor.request('tutor/tutor-dashboard.php')[0]==303,'Deactivation invalidates current session')
