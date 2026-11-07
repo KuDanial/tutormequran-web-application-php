@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 if (!isset($authUser) || $authUser['role']!=='student') { http_response_code(403); exit; }
-require_once __DIR__ . '/payments.php';
+require_once __DIR__ . '/payment-verification.php';
 $paymentPage=basename($_SERVER['SCRIPT_FILENAME']);
 $paymentUploadPage=$paymentPage==='student-payment-upload.php';
 $paymentListPage=$paymentPage==='student-invoices.php';
@@ -35,8 +35,11 @@ try {
 }
 if ($paymentBooking && $paymentBookingId) {
     try {
+        $db=tmq_db();$db->beginTransaction();
         $paymentBooking=tmq_payment_booking($authUser,$paymentBookingId);
         $payment=tmq_payment_record($authUser,$paymentBookingId);
         $paymentHistory=tmq_payment_history($authUser,$paymentBookingId);
-    } catch (Throwable $error) { http_response_code(503);$paymentBooking=null;$paymentMessage='Payments are temporarily unavailable. Please try again later.'; }
+        $paymentTotals=$payment?tmq_payment_settlement($paymentBooking,$payment,tmq_payment_current($db,(int)$payment['payment_id'])):null;
+        $db->commit();
+    } catch (Throwable $error) { if(isset($db) && $db->inTransaction()) { $db->rollBack(); } http_response_code(503);$paymentBooking=null;$paymentMessage='Payments are temporarily unavailable. Please try again later.'; }
 }

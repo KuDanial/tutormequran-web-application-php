@@ -2,7 +2,7 @@
 <header class="portal-heading"><div><span class="section-subtitle">Your lesson</span><h1><?= $paymentListPage?'Lesson charges':($paymentUploadPage?'Submit payment evidence':'Payment and receipt history') ?></h1><p>Record genuine DuitNow transfers and their receipt evidence. Uploading a receipt does not verify payment.</p></div></header>
 <?php if($paymentMessage): ?><p role="status"><?= tmq_escape($paymentMessage) ?></p><?php endif; ?>
 <?php if($paymentListPage): ?>
-<p>This is a lesson-charge summary, not a finalized paid invoice. Tutor acknowledgement and Admin verification are deferred.</p>
+<p>This is a lesson-charge summary, not a finalized paid invoice. Tutor acknowledges each transfer; Admin reviews evidence and separately verifies the exact total.</p>
 <?php foreach($paymentBookings as $row): ?><section class="portal-card"><h2>Booking #<?= (int)$row['booking_id'] ?> &middot; <?= tmq_escape($row['tutor_name']) ?></h2><?= tmq_booking_badge($row['status']) ?><p><?= tmq_escape(tmq_booking_time($row['starts_at'])) ?> &middot; Agreed lesson amount RM <?= tmq_escape($row['expected_amount']) ?></p>
 <?php if(in_array($row['status'],['completed','closed'],true)): ?><a class="btn btn-outline" href="student-payment-view.php?id=<?= (int)$row['booking_id'] ?>">View payment record</a><?php else: ?><p><?= in_array($row['status'],['cancelled','rejected'],true)?'No payment submission for this booking.':'Payment is not due before both lesson completion confirmations.' ?></p><?php endif; ?></section><?php endforeach; ?>
 <?php if(!$paymentBookings): ?><p>No lesson charges to display.</p><?php endif; ?>
@@ -13,6 +13,7 @@
     'Booking status'=>ucfirst($paymentBooking['status']),'Expected lesson amount'=>'RM '.$paymentBooking['expected_amount'],
     'Payment reference'=>$payment?'PAY-'.$payment['payment_id']:'Not opened','Payment status'=>$payment?ucfirst(str_replace('_',' ',$payment['status'])):'Not opened'] as $label=>$value): ?>
 <div><dt><?= tmq_escape($label) ?></dt><dd><?= tmq_escape($value) ?></dd></div><?php endforeach; ?></dl>
+<?php if(!empty($paymentTotals)): ?><p>Current valid total: RM <?= tmq_escape($paymentTotals['valid_total']) ?> &middot; Outstanding: RM <?= tmq_escape($paymentTotals['outstanding']) ?></p><p role="status"><?= tmq_escape($paymentTotals['message']) ?></p><?php endif; ?>
 <?php if(!$paymentWritable): ?><p>This booking/payment is read-only for Student submissions.</p><?php endif; ?>
 <?php if($paymentWritable && !$paymentUploadPage): ?><a class="btn btn-primary" href="student-payment-upload.php?id=<?= (int)$paymentBookingId ?>"><?= $payment?'Add a genuine transfer or correct a receipt':'Open payment' ?></a><?php endif; ?>
 </section>
@@ -27,7 +28,7 @@
 <section class="portal-card"><h2>I made another payment</h2><p>Use this only for money actually sent in a new transfer. For example, after an RM4 transfer, a genuine RM36 top-up is a separate transfer. To replace an existing receipt, use its correction action below.</p>
 <?php $receiptAction='transfer';$receiptCurrent=null;require __DIR__.'/payment-receipt-form.php'; ?></section>
 <?php endif; ?>
-<section class="portal-card"><h2>Genuine transfer and receipt history</h2><p>Amounts below are Student claims, not verified funds. Only the current receipt describes each transfer; older versions never represent additional money. Tutor acknowledgement and Admin review are not implemented in this phase.</p>
+<section class="portal-card"><h2>Genuine transfer and receipt history</h2><p>Amounts below are Student claims, not verified funds. Only the current receipt describes each transfer; older versions never represent additional money. Only current Tutor Received + Admin Valid evidence contributes to the valid total.</p>
 <?php if(!$paymentHistory): ?><p>No genuine transfers submitted.</p><?php endif; ?>
 <?php foreach($paymentHistory as $receipt): ?>
 <article class="portal-card"><h3>Transfer #<?= (int)$receipt['transfer_id'] ?> &middot; Receipt version <?= (int)$receipt['attempt_number'] ?> &middot; <?= $receipt['is_current']?'Current':'Historical' ?></h3><dl class="portal-details">

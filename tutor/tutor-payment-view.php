@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
+require __DIR__ . '/../includes/payment-review-page.php';
 $assetPrefix = '../';
-$pageTitle = 'Review student payment - TutorMeQuran';
-$pageDescription = 'TMQ-1024 · Ahmad Hakimi · Quran recitation & Tajweed.';
+$pageTitle = 'Payment records - TutorMeQuran';
+$pageDescription = 'Payment evidence, review and settlement history.';
 $tutorApplicant = false;
 $homeFooter = false;
 $footerHelp = 'tutor-help.php';
@@ -11,6 +12,7 @@ $footerFaq = 'tutor-faq.php';
 <?php require __DIR__ . '/../includes/header.php'; ?><body class="portal-page tutor-workspace"><a href="#main-content" class="portal-skip">Skip to content</a>
 <?php require __DIR__ . '/../includes/tutor-header.php'; ?>
 
-<main id="main-content" class="container portal-main student-hub"><header class="portal-heading"><div><h1>Review student payment</h1><p>PAY-1024 · TMQ-1024 · RM 40.00</p></div></header>
-<section class="booking-progress" aria-label="Booking process" data-progress-booking="TMQ-1024" data-progress-status="receipt" data-progress-source="page"><ol class="booking-journey"><li class="done"><span class="booking-step" aria-label="Booking: complete"><span class="booking-step-dot" aria-hidden="true">&#10003;</span><span class="booking-step-label">Booking</span></span></li><li class="done"><span class="booking-step" aria-label="Arrange: complete"><span class="booking-step-dot" aria-hidden="true">&#10003;</span><span class="booking-step-label">Arrange</span></span></li><li class="done"><span class="booking-step" aria-label="Class: complete"><span class="booking-step-dot" aria-hidden="true">&#10003;</span><span class="booking-step-label">Class</span></span></li><li class="current" aria-current="step"><span class="booking-step" aria-label="Payment: current stage"><span class="booking-step-dot" aria-hidden="true">4</span><span class="booking-step-label">Payment</span></span></li><li class=""><span class="booking-step" aria-label="Verified: upcoming stage"><span class="booking-step-dot" aria-hidden="true">5</span><span class="booking-step-label">Verified</span></span></li></ol><p class="booking-current-label" aria-live="polite">Payment - receipt and confirmation status</p></section><section class="portal-card"><h2>Student receipt</h2><p data-receipt-empty>No receipt has been uploaded yet.</p><div data-receipt-present hidden><dl class="portal-details"><div><dt>File</dt><dd data-receipt-name></dd></div><div><dt>Amount</dt><dd data-receipt-amount></dd></div><div><dt>Payment date</dt><dd data-receipt-date></dd></div><div><dt>Tutor confirmation</dt><dd data-payment-confirmation>Awaiting confirmation</dd></div><div><dt>Admin verification</dt><dd>Pending</dd></div></dl><img data-receipt-image hidden alt="Uploaded DuitNow receipt"><div class="portal-actions"><a data-receipt-download class="btn btn-outline btn-sm">Download receipt</a></div></div></section><section class="portal-card" data-receipt-present hidden><h2>Check your bank account</h2><p>Confirm only after checking that RM 40.00 arrived. Report a mismatch if the transfer is missing or the amount is incorrect.</p><div class="portal-actions"><a href="tutor-payment-confirm.php" class="btn btn-primary">Confirm funds received</a><a href="tutor-payment-issue.php" class="btn btn-outline">Report a payment issue</a></div></section><div class="portal-actions"><a href="tutor-payment-qr.php" class="btn btn-outline">Manage DuitNow QR</a><a href="tutor-payments.php" class="btn btn-outline">Back to payments</a></div></main>
-<?php require __DIR__ . '/../includes/footer.php'; ?><script src="../assets/js/student-workspace.js"></script><script src="../assets/js/tutor-workflow.js"></script><script src="../assets/js/booking-progress.js"></script><script src="../assets/js/action-confirmation.js"></script></body></html>
+<main id="main-content" class="container portal-main student-hub">
+<?php require __DIR__ . '/../includes/payment-review-content.php'; ?>
+</main>
+<?php require __DIR__ . '/../includes/footer.php'; ?></body></html>
