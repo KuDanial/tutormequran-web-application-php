@@ -1,4 +1,7 @@
-<?php if (!isset($authUser,$bookingMessage)) { http_response_code(404); exit; } ?>
+<?php
+if (!isset($authUser,$bookingMessage)) { http_response_code(404); exit; }
+require_once __DIR__.'/feedback.php';
+?>
 <header class="portal-heading"><div><span class="section-subtitle"><?= $bookingRole==='admin'?'Operations workspace':($bookingRole==='tutor'?'Tutor studio':'Your lesson') ?></span><h1><?= !empty($isBookingCoordination)?'Arrange your class':(!empty($isBookingCancellation)?'Cancel booking':(!empty($isBookingSession)?'Lesson session and completion':'Booking details')) ?><?= $booking?' #'.(int)$booking['booking_id']:'' ?></h1></div></header>
 <?php if($bookingMessage): ?><p role="status"><?= tmq_escape($bookingMessage) ?></p><?php endif; ?>
 <?php if($booking): ?>
@@ -24,6 +27,7 @@ foreach($details as $label=>$value): ?><div><dt><?= tmq_escape($label) ?></dt><d
 <?php if(in_array($bookingRole,['student','tutor'],true)): ?><a class="btn btn-outline" href="<?= $bookingRole ?>-chat.php?id=<?= (int)$booking['booking_id'] ?>"><?= $bookingRole==='student'?'Message Tutor':'Message Student' ?></a><?php endif; ?>
 <?php require __DIR__ . '/booking-arrangement-content.php'; ?>
 <?php require __DIR__ . '/booking-lifecycle-content.php'; ?>
+<?php if($bookingRole!=='admin' && $booking['feedback_id']): ?><a class="btn btn-outline btn-sm" href="<?= $bookingRole ?>-feedbacks.php?id=<?= (int)$booking['booking_id'] ?>">View recorded feedback</a><?php elseif($bookingRole==='student' && tmq_feedback_eligible($booking)): ?><a class="btn btn-outline btn-sm" href="student-feedback-addNew.php?id=<?= (int)$booking['booking_id'] ?>">Leave feedback</a><?php endif; ?>
 </section>
 <?php if(in_array($bookingRole,['student','tutor'],true)): require __DIR__ . '/booking-change-content.php'; endif; ?>
 <?php endif; ?>

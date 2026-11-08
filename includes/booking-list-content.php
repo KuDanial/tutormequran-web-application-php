@@ -1,4 +1,7 @@
-<?php if (!isset($authUser,$bookingRows)) { http_response_code(404); exit; } ?>
+<?php
+if (!isset($authUser,$bookingRows)) { http_response_code(404); exit; }
+require_once __DIR__.'/feedback.php';
+?>
 <header class="portal-heading"><div><span class="section-subtitle"><?= $bookingRole==='admin'?'Operations workspace':($bookingRole==='tutor'?'Tutor studio':'Your learning journey') ?></span><h1><?= $bookingRole==='admin'?'Booking management':'My Bookings' ?></h1><p><?= $bookingRole==='admin'?'Review Student and Tutor bookings.':'View your lesson requests and booking history.' ?></p></div>
 <?php if($bookingRole==='student'): ?><div class="portal-actions"><a class="btn btn-primary btn-sm" href="student-booking-addNew.php">Book a lesson</a></div><?php endif; ?></header>
 <?php if($bookingMessage): ?><p role="status"><?= tmq_escape($bookingMessage) ?></p><?php endif; ?>
@@ -14,6 +17,6 @@
 <dl class="portal-details"><div><dt>Lesson</dt><dd><?= tmq_escape(tmq_booking_time($row['starts_at'])) ?></dd></div><div><dt>End</dt><dd><?= tmq_escape(tmq_booking_time($row['ends_at'])) ?></dd></div><div><dt>Mode</dt><dd><?= ucfirst($row['class_mode']) ?></dd></div><div><dt>Lesson Fee</dt><dd>RM <?= tmq_escape($row['expected_amount']) ?></dd></div></dl>
 <?php if($row['status']==='requested'): ?><p><?= $bookingRole==='tutor'?'Awaiting your decision.':'Waiting for tutor acceptance.' ?></p><?php endif; ?>
 <?php if($row['status']==='cancelled'): ?><p>Cancelled by <?= tmq_escape(ucfirst($row['cancelled_by_role']??'Unknown')) ?> &middot; <?= tmq_escape($row['cancellation_timing']??'') ?></p><?php elseif(in_array($row['status'],['accepted','completed','closed'],true)): ?><p><?= tmq_escape(tmq_completion_label($row)) ?></p><?php endif; ?>
-<div class="portal-actions"><a class="btn btn-outline btn-sm" href="<?= $bookingDetailPage ?>?id=<?= (int)$row['booking_id'] ?>">View booking</a></div></article><?php endforeach; ?>
+<div class="portal-actions"><a class="btn btn-outline btn-sm" href="<?= $bookingDetailPage ?>?id=<?= (int)$row['booking_id'] ?>">View booking</a><?php if($bookingRole!=='admin' && $row['feedback_id']): ?><a class="btn btn-outline btn-sm" href="<?= $bookingRole ?>-feedbacks.php?id=<?= (int)$row['booking_id'] ?>">View recorded feedback</a><?php elseif($bookingRole==='student' && tmq_feedback_eligible($row)): ?><a class="btn btn-outline btn-sm" href="student-feedback-addNew.php?id=<?= (int)$row['booking_id'] ?>">Leave feedback</a><?php endif; ?></div></article><?php endforeach; ?>
 <?php if(!$bookingRows): ?><section class="portal-card"><p>No bookings to display.</p></section><?php endif; ?></section>
 <?php endif; ?>
