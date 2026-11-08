@@ -115,6 +115,7 @@
     result.hidden = true;
   });
   form.addEventListener('submit', (event) => {
+    if (form.hasAttribute('data-persisted-support')) return;
     event.preventDefault();
     if (!description.value.trim()) description.setCustomValidity('Please describe your request.');
     if (!form.reportValidity()) return;

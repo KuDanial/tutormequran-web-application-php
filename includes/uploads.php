@@ -22,7 +22,7 @@ function tmq_storage_root(): string
 }
 function tmq_stored_file(string $key): string
 {
-    if (!preg_match('~\A(?:(profiles|certificates|duitnow|receipts)/[a-f0-9]{40}\.(jpg|png|pdf)|chat/[a-f0-9]{40}\.(jpg|png|pdf|txt|docx|xlsx|pptx|mp4|webm))\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
+    if (!preg_match('~\A(?:(profiles|certificates|duitnow|receipts)/[a-f0-9]{40}\.(jpg|png|pdf)|support/[a-f0-9]{40}\.(jpg|png)|chat/[a-f0-9]{40}\.(jpg|png|pdf|txt|docx|xlsx|pptx|mp4|webm))\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
     $root = tmq_storage_root();
     $path = $root . '/' . $key;
     if (is_link(dirname($path)) || is_link($path)) { throw new RuntimeException('Invalid file location.'); }
@@ -38,6 +38,8 @@ function tmq_receive_upload(string $field, string $kind, bool $required = false)
     if (!is_array($file) || !is_string($file['name'] ?? null) || !is_string($file['tmp_name'] ?? null)
         || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) { throw new DomainException('Upload failed. Maximum file size is 5 MB.'); }
     $original = $file['name'];
+    // PHP may strip client-supplied directories from name; inspect full_path too.
+    if ($kind==='support' && isset($file['full_path']) && (!is_string($file['full_path']) || $file['full_path']!==$original)) { throw new DomainException('Use a plain filename without folders.'); }
     if ($original === '' || strlen($original)>255 || preg_match('~[\\\\/\x00-\x1f]~',$original)) { throw new DomainException('Use a plain filename without folders or control characters.'); }
     $tmp = $file['tmp_name'];
     if (!is_uploaded_file($tmp)) { throw new DomainException('Invalid upload.'); }
@@ -50,6 +52,7 @@ function tmq_receive_upload(string $field, string $kind, bool $required = false)
     if ($documents) { $types['application/pdf']=['pdf']; }
     if (!isset($types[$mime]) || !in_array($extension,$types[$mime],true)) { throw new DomainException('Choose a valid JPG/PNG image' . ($documents?' or PDF.':'.')); }
     $bytes = file_get_contents($tmp);
+    if ($kind==='support' && preg_match('~<\s*(?:script|html|svg|iframe|object|embed)\b|<\?|<%~i',$bytes)) { throw new DomainException('Active web content is not allowed.'); }
     if (preg_match('/<\?(?:php|=)/i',$bytes)) { throw new DomainException('Executable file content is not allowed.'); }
     if ($mime === 'application/pdf') {
         if (!str_starts_with($bytes,'%PDF-') || !str_contains(substr($bytes,-2048),'%%EOF')

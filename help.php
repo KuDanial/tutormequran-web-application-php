@@ -32,28 +32,8 @@ $footerFaq = 'chatbot.php';
 <p>Include your booking ID when explaining a payment or scheduling issue.</p>
 <section class="portal-card ">
 <h2>Support request</h2>
-<form class="portal-form">
-<button type="submit" hidden disabled aria-hidden="true">
-</button>
-<div class="portal-fields">
-<div class="form-group">
-<label for="f-supportEmail" class="form-label">Your Email</label>
-<input id="f-supportEmail" name="supportEmail" class="form-control" type="email" value="">
-</div>
-<div class="form-group">
-<label for="f-supportBooking" class="form-label">Booking ID (if applicable)</label>
-<input id="f-supportBooking" name="supportBooking" class="form-control" type="text" value="">
-</div>
-<div class="form-group">
-<label for="f-supportMessage" class="form-label">Your Message</label>
-<textarea id="f-supportMessage" name="supportMessage" class="form-control" rows="4">
-</textarea>
-</div>
-</div>
-<div class="portal-actions">
-<button type="button" class="btn btn-primary">Send Request</button>
-</div>
-</form>
+<p>Support requests require a Student or Tutor account. Sign in and choose Submit a request in your Help Centre.</p>
+<a class="btn btn-primary" href="login.php">Sign in for support</a>
 </section>
 </section>
 </main>
