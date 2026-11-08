@@ -33,6 +33,7 @@ function tmq_confirm_completion(array $actor, int $id, int $version): bool
         $q=$db->prepare("UPDATE bookings SET $column=UTC_TIMESTAMP(),status=? WHERE booking_id=? AND status='accepted' AND agreement_version=? AND $column IS NULL");
         $q->execute([$status,$id,$version]);
         if ($q->rowCount()!==1) { tmq_change_conflict('This booking has already been updated. Reload its details.'); }
+        tmq_notify_booking($db,$id,$status==='completed'?'booking_completed':'booking_completion_needed',(int)$actor['user_id']);
         $db->commit(); return true;
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }

@@ -53,6 +53,7 @@ function tmq_chat_send(array $actor, int $id, array $input): void
         $q->execute([$id,$actor['user_id'],$type,$body,$label,$lat,$lng]); $messageId=$db->lastInsertId();
         $q=$db->prepare('INSERT INTO message_attachments (message_id,file_path,original_filename,mime_type,file_size_bytes) VALUES (?,?,?,?,?)');
         foreach ($files as $file) { $q->execute([$messageId,$file['file_path'],$file['original_filename'],$file['mime_type'],$file['file_size_bytes']]); }
+        tmq_notify_booking($db,$id,'chat_message',(int)$actor['user_id']);
         $db->commit(); $files=[];
     } catch (Throwable $e) {
         if ($db->inTransaction()) { $db->rollBack(); }

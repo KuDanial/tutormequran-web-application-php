@@ -148,6 +148,7 @@ function tmq_submit_payment(array $actor, int $bookingId, array $input): int
         $q=$db->prepare("UPDATE payments SET status='pending',evidence_revision=evidence_revision+1,admin_remark=NULL,reviewed_by_admin_id=NULL,reviewed_at=NULL WHERE payment_id=? AND status<>'verified' AND evidence_revision=?");
         $q->execute([$paymentId,$payment['evidence_revision']]);
         if ($q->rowCount()!==1) { tmq_payment_conflict('Payment evidence was just updated. Reload the payment.'); }
+        tmq_notify_booking($db,$bookingId,'payment_submitted',(int)$actor['user_id'],'tutor');
         $db->commit();return $id;
     } catch (Throwable $error) { tmq_payment_rollback($db,$error,$upload); }
 }

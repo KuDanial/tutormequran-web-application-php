@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/profiles.php';
+require_once __DIR__ . '/notifications.php';
 function tmq_certificates(int $tutorId): array
 {
     return tmq_profile_rows('SELECT c.*, CONCAT(u.first_name,\' \',u.last_name) AS reviewer FROM certificates c LEFT JOIN admins a ON a.admin_id=c.reviewed_by_admin_id LEFT JOIN users u ON u.user_id=a.user_id WHERE c.tutor_id=? ORDER BY c.certificate_id DESC',[$tutorId]);
@@ -46,6 +47,7 @@ function tmq_review_certificate(array $actor,int $id,array $post): void
         $admin=tmq_profile_rows('SELECT admin_id FROM admins WHERE user_id=?',[$actor['user_id']])[0]['admin_id'];
         tmq_profile_run('UPDATE certificates SET status=?,reviewed_by_admin_id=?,reviewed_at=UTC_TIMESTAMP(),admin_remark=? WHERE certificate_id=?',[$decision,$admin,$remark?:null,$id]);
         if($decision==='approved' && tmq_input($post,'makeDisplayed')==='1'){tmq_profile_run('UPDATE tutors SET displayed_certificate_id=? WHERE tutor_id=?',[$id,$lookup[0]['tutor_id']]);}
+        tmq_notification_insert($db,(int)$lookup[0]['user_id'],'certificate_'.$decision,null,$id);
         $db->commit();
     }catch(Throwable $e){if($db->inTransaction()){$db->rollBack();}throw $e;}
 }

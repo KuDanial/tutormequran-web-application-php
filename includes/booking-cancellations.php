@@ -47,6 +47,7 @@ function tmq_cancel_booking(array $actor, int $id, string $reason): void
             $q->execute(['Automatically withdrawn because the booking was cancelled.',$pending]);
             if ($q->rowCount()!==1) { tmq_change_conflict('This change request has already been updated.'); }
         }
+        tmq_notify_booking($db,$id,'booking_cancelled',(int)$actor['user_id']);
         $db->commit();
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }

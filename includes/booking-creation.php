@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/availability.php';
 require_once __DIR__ . '/profiles.php';
+require_once __DIR__ . '/notifications.php';
 
 function tmq_booking_id(string $value): int
 {
@@ -69,7 +70,9 @@ function tmq_create_booking(array $actor, array $input): int
         $amount = tmq_booking_amount($tutor['hourly_rate'],$slot);
         $q = $db->prepare("INSERT INTO bookings (student_id,tutor_id,slot_id,starts_at,ends_at,class_mode,notes,hourly_rate_snapshot,expected_amount,status) VALUES (?,?,?,?,?,?,?,?,?,'requested')");
         $q->execute([$studentId,$tutorId,$slotId,$slot['starts_at'],$slot['ends_at'],$mode,$notes?:null,$tutor['hourly_rate'],$amount]);
-        $id = (int)$db->lastInsertId(); $db->commit(); return $id;
+        $id = (int)$db->lastInsertId();
+        tmq_notify_booking($db,$id,'booking_requested',(int)$actor['user_id'],'tutor');
+        $db->commit(); return $id;
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }
         if ($error instanceof PDOException && (int)($error->errorInfo[1]??0)===1062) {

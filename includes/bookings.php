@@ -76,6 +76,7 @@ function tmq_decide_booking(array $actor, int $id, string $action, string $reaso
         $q=$db->prepare("UPDATE bookings SET status=?,decision_at=UTC_TIMESTAMP(),rejection_reason=? WHERE booking_id=? AND tutor_id=? AND status='requested'");
         $q->execute([$action==='accept'?'accepted':'rejected',$reason,$id,$before['tutor_id']]);
         if ($q->rowCount()!==1) { http_response_code(409); throw new DomainException('This booking has already been updated.'); }
+        tmq_notify_booking($db,$id,$action==='accept'?'booking_accepted':'booking_rejected',(int)$actor['user_id'],'student');
         $db->commit();
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }

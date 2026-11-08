@@ -127,7 +127,9 @@ function tmq_create_booking_change(array $actor, int $id, array $input): int
         $q->execute([$id,$actor['user_id'],$booking['agreement_version'],$booking['slot_id'],$targetId,$booking['class_mode'],$mode,
             $booking['expected_amount'],$amount,$reason,$booking['venue_address'],$arrangement['venue_address'],
             $booking['meeting_platform'],$arrangement['meeting_platform'],$booking['meeting_url'],$arrangement['meeting_url']]);
-        $changeId=(int)$db->lastInsertId(); $db->commit(); return $changeId;
+        $changeId=(int)$db->lastInsertId();
+        tmq_notify_booking($db,$id,'booking_change_requested',(int)$actor['user_id']);
+        $db->commit(); return $changeId;
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }
         if ($error instanceof PDOException && in_array((int)($error->errorInfo[1]??0),[1062,1205,1213],true)) {
@@ -189,6 +191,7 @@ function tmq_respond_booking_change(array $actor, int $id, int $changeId, string
         // Schema reserves responder identity for the counterpart. Withdrawal actor is the stored requester.
         $q->execute([$status,$action==='withdraw'?null:$actor['user_id'],$note?:null,$changeId]);
         if ($q->rowCount()!==1) { tmq_change_conflict('This change request has already been updated.'); }
+        tmq_notify_booking($db,$id,'booking_change_'.$status,(int)$actor['user_id']);
         $db->commit();
     } catch (Throwable $error) {
         if ($db->inTransaction()) { $db->rollBack(); }

@@ -144,6 +144,13 @@ function tmq_review_payment(array $actor, int $bookingId, array $input): void
             $q->execute([$status,$adminId,$adminId,$admin?($remark?:null):null,$payment['payment_id'],$payment['evidence_revision']]);
             if ($q->rowCount()!==1) { tmq_payment_conflict('Payment evidence was just updated. Reload the payment.'); }
         }
+        if ($action==='verify') {
+            tmq_notify_booking($db,$bookingId,'payment_verified',(int)$actor['user_id'],'participants');
+        } else {
+            $type=$admin?['valid'=>'payment_admin_valid','rejected'=>'payment_admin_rejected','reupload_required'=>'payment_reupload_required'][$decision]
+                :['received'=>'payment_tutor_received','issue'=>'payment_tutor_issue'][$decision];
+            tmq_notify_booking($db,$bookingId,$type,(int)$actor['user_id'],'student');
+        }
         $db->commit();
     } catch (Throwable $error) { tmq_payment_rollback($db,$error); }
 }
