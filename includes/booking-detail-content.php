@@ -21,6 +21,7 @@ foreach($details as $label=>$value): ?><div><dt><?= tmq_escape($label) ?></dt><d
 <?php else: ?><p>Waiting for tutor acceptance.</p><?php endif; ?>
 <?php elseif($booking['status']==='accepted'): ?><p>The Tutor accepted this booking. Your lesson slot remains reserved.</p>
 <?php elseif($booking['status']==='rejected'): ?><p>The Tutor rejected this booking. This record is retained in your booking history.</p><?php endif; ?>
+<?php if(in_array($bookingRole,['student','tutor'],true)): ?><a class="btn btn-outline" href="<?= $bookingRole ?>-chat.php?id=<?= (int)$booking['booking_id'] ?>"><?= $bookingRole==='student'?'Message Tutor':'Message Student' ?></a><?php endif; ?>
 <?php require __DIR__ . '/booking-arrangement-content.php'; ?>
 <?php require __DIR__ . '/booking-lifecycle-content.php'; ?>
 </section>

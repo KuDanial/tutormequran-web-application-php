@@ -196,7 +196,7 @@ def main():
                 for role,browser in [('student',student),('tutor',tutor),('admin',admin)]:
                     status,body,_=browser.request(page)
                     # The protected receipt stream requires an owned file ID; a bare URL is 404.
-                    own_status=404 if page in ['student/student-payment-file.php','tutor/tutor-payment-file.php','admin/manage-payments-file.php'] else 200
+                    own_status=404 if page in ['student/student-payment-file.php','tutor/tutor-payment-file.php','admin/manage-payments-file.php','student/student-chat-file.php','tutor/tutor-chat-file.php'] else 200
                     check(status==(own_status if role==expected else 403),'role access '+role+' '+page)
                     check('Fatal error' not in body and 'Warning:' not in body,'clean response '+page)
             sql("UPDATE users SET account_status='inactive' WHERE user_id=?",[tutorid])

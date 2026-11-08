@@ -22,7 +22,7 @@ function tmq_storage_root(): string
 }
 function tmq_stored_file(string $key): string
 {
-    if (!preg_match('~\A(profiles|certificates|duitnow|receipts)/[a-f0-9]{40}\.(jpg|png|pdf)\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
+    if (!preg_match('~\A(?:(profiles|certificates|duitnow|receipts)/[a-f0-9]{40}\.(jpg|png|pdf)|chat/[a-f0-9]{40}\.(jpg|png|pdf|txt|docx|xlsx|pptx|mp4|webm))\z~', $key)) { throw new RuntimeException('Invalid file reference.'); }
     $root = tmq_storage_root();
     $path = $root . '/' . $key;
     if (is_link(dirname($path)) || is_link($path)) { throw new RuntimeException('Invalid file location.'); }
