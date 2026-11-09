@@ -1,11 +1,14 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-$query = tmq_db()->prepare('SELECT tutor_id, application_submitted_at FROM tutors WHERE user_id=?');
-$query->execute([$authUser['user_id']]);
-$tutorAccount = $query->fetch();
-$query = tmq_db()->prepare('SELECT COUNT(*) FROM certificates WHERE tutor_id=?');
-$query->execute([$tutorAccount['tutor_id']]);
-$hasCertificate = (int)$query->fetchColumn() > 0;
+require_once __DIR__ . '/../includes/profiles.php';
+try {
+    $tutorAccount = tmq_own_tutor((int)$authUser['user_id']);
+    $query = tmq_db()->prepare('SELECT COUNT(*) FROM certificates WHERE tutor_id=?');
+    $query->execute([$tutorAccount['tutor_id']]);
+    $hasCertificate = (int)$query->fetchColumn() > 0;
+} catch (Throwable $error) {
+    http_response_code(503); exit('Tutor account is temporarily unavailable. Please try again later.');
+}
 $assetPrefix = '../';
 $pageTitle = 'Tutor account - TutorMeQuran';
 $pageDescription = 'Your tutor account and application progress.';
@@ -29,10 +32,10 @@ $footerFaq = 'tutor-faq.php';
 <li class="<?= $hasCertificate ? 'done' : 'current' ?>"><span class="booking-step"><span class="booking-step-dot" aria-hidden="true">&#10003;</span><span class="booking-step-label">Apply</span></span></li>
 <li class="<?= $hasCertificate ? 'current' : '' ?>"><span class="booking-step"><span class="booking-step-dot" aria-hidden="true">2</span><span class="booking-step-label">Admin verification</span></span></li>
 </ol>
-<p class="booking-current-label"><?= $hasCertificate ? 'View your certificate status' : 'Account created ? certificate not submitted' ?></p>
+<p class="booking-current-label"><?= $hasCertificate ? 'View your certificate status' : 'Account created — certificate not submitted' ?></p>
 </section>
 <aside class="flow-notice warm"><strong><?= $hasCertificate ? 'Tutor account' : 'Application incomplete' ?></strong>
-<p>Your account is ready. Teaching tools will open once an admin verifies your certificate. No approval is granted by account registration.</p>
+<p>You can manage your profile and availability. Public listing requires an approved displayed certificate, a complete profile and Public visibility. No approval is granted by account registration.</p>
 </aside>
 <div>
 <section class="portal-card ">
@@ -40,7 +43,7 @@ $footerFaq = 'tutor-faq.php';
 <dl class="portal-details">
 <div>
 <dt>Submitted</dt>
-<dd><?= tmq_escape(substr($tutorAccount['application_submitted_at'], 0, 10)) ?></dd>
+<dd><?= tmq_escape($tutorAccount['application_submitted_at'] ? (new DateTimeImmutable($tutorAccount['application_submitted_at'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'))->format('d M Y') : 'Not submitted yet') ?></dd>
 </div>
 <div>
 <dt>Certificate</dt>
@@ -53,7 +56,7 @@ $footerFaq = 'tutor-faq.php';
 </div>
 <div>
 <dt>Public Listing</dt>
-<dd>Not listed</dd>
+<dd><?= tmq_public_tutor($tutorAccount) ? 'Listed publicly' : 'Not listed publicly' ?></dd>
 </div>
 </dl>
 <div class="portal-actions"><a href="tutor-certificate-view.php" class="btn btn-primary btn-sm">View application</a>

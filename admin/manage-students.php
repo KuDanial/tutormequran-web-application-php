@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') { http_response_code(405); exit('This page is read-only.'); }
 $assetPrefix = '../';
-$pageTitle = 'Manage Students - TutorMeQuran';
-$pageDescription = 'Manage your TutorMeQuran activity.';
+$pageTitle = 'Student accounts - TutorMeQuran';
+$pageDescription = 'Admin Student account management is not available. Students manage their own profiles.';
 $currentPage = 'manage-students.php';
 $adminPrefix = '';
 $workspaceLabel = 'Administration';
@@ -14,44 +15,9 @@ $showAdminSettings = true;
 <div class="admin-body">
 <?php require __DIR__ . '/../includes/admin-header.php'; ?>
 <main id="main-content" class="container portal-main">
-<header class="portal-heading">
-<div><span class="section-subtitle">Operations workspace</span>
-<h1>Manage Students</h1>
-<p>Manage your TutorMeQuran activity.</p>
-</div>
-</header>
-
-  <div class="portal-table-wrap" role="region" aria-label="Student accounts" tabindex="0">
-<table class="portal-table">
-<caption>Student accounts</caption>
-<thead>
-<tr>
-<th scope="col">Student Name</th>
-<th scope="col">Email</th>
-<th scope="col">Phone</th>
-<th scope="col">Total Bookings</th>
-<th scope="col">Status</th>
-<th scope="col">Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Ahmad Hakimi</td>
-<td>ahmad@example.com</td>
-<td>012-345 6789</td>
-<td>3</td>
-<td><span class="portal-badge good">Active</span>
-</td>
-<td>
-<div class="portal-actions"><a class="btn btn-outline btn-sm" href="manage-students-view.php">View</a><a class="btn btn-outline btn-sm" href="manage-students-edit.php">Edit</a><button type="button" class="btn btn-danger btn-sm" data-delete-row data-confirm="Delete student Ahmad Hakimi? This cannot be undone."><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-
+<header class="portal-heading"><div><span class="section-subtitle">Operations workspace</span><h1>Student accounts</h1></div></header>
+<section class="portal-card"><p>Admin Student account management is not available. Students manage their own profiles.</p><a class="btn btn-outline btn-sm" href="admin-settings.php">Profile field permissions</a></section>
 </main>
 <?php require __DIR__ . '/../includes/admin-footer.php'; ?>
 </div>
-</div><script src="../assets/js/action-confirmation.js"></script><script src="../assets/js/admin-crud.js"></script></body></html>
+</div><script src="../assets/js/action-confirmation.js"></script></body></html>

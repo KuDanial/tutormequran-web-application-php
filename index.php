@@ -57,7 +57,7 @@ $footerFaq = 'chatbot.php';
   <!-- Search & Filter Bar -->
   <div class="container search-container" id="search-section">
     <div class="search-box">
-      <form id="search-form"><button type="submit" hidden disabled aria-hidden="true"></button>
+      <form id="search-form" method="get" action="tutors.php">
         <div class="search-grid">
 
           <!-- Search input -->
@@ -65,7 +65,7 @@ $footerFaq = 'chatbot.php';
             <label for="search-keyword"><i class="fas fa-search"></i> Search Tutor</label>
             <div class="search-input-wrapper">
               <i class="fas fa-user-circle"></i>
-              <input type="text" id="search-keyword" placeholder="Search by name, expertise...">
+              <input type="text" id="search-keyword" name="searchTutor" placeholder="Search by name, expertise...">
             </div>
           </div>
 
@@ -74,11 +74,11 @@ $footerFaq = 'chatbot.php';
             <label for="filter-rate"><i class="fas fa-money-bill-wave"></i> Hourly Rate</label>
             <div class="search-input-wrapper">
               <i class="fas fa-ring"></i>
-              <select id="filter-rate">
+              <select id="filter-rate" name="filterRate">
                 <option value="">Any Price</option>
-                <option value="under-30">Below RM 30 / hr</option>
-                <option value="30-50">RM 30 - RM 50 / hr</option>
-                <option value="over-50">Above RM 50 / hr</option>
+                <option value="below30">Below RM 30 / hr</option>
+                <option value="30to50">RM 30 - RM 50 / hr</option>
+                <option value="above50">Above RM 50 / hr</option>
               </select>
             </div>
           </div>
@@ -88,7 +88,7 @@ $footerFaq = 'chatbot.php';
             <label for="filter-class-type"><i class="fas fa-laptop-house"></i> Class Type</label>
             <div class="search-input-wrapper">
               <i class="fas fa-map-marker-alt"></i>
-              <select id="filter-class-type">
+              <select id="filter-class-type" name="filterMode">
                 <option value="">All Types</option>
                 <option value="online">Online (Google Meet/WhatsApp)</option>
                 <option value="physical">Physical Class (Face-to-face)</option>
@@ -96,44 +96,13 @@ $footerFaq = 'chatbot.php';
             </div>
           </div>
 
-          <!-- Gender filter -->
-          <div class="search-field">
-            <label for="filter-gender"><i class="fas fa-users"></i> Tutor Gender</label>
-            <div class="search-input-wrapper">
-              <i class="fas fa-venus-mars"></i>
-              <select id="filter-gender">
-                <option value="">Any Gender</option>
-                <option value="male">Ustaz (Male)</option>
-                <option value="female">Ustazah (Female)</option>
-              </select>
-            </div>
-          </div>
-
           <!-- Search button -->
-          <a href="tutors.php" class="btn btn-primary btn-sm">Search Tutors</a>
+          <button type="submit" class="btn btn-primary btn-sm">Search Tutors</button>
 
         </div>
       </form>
     </div>
   </div>
-
-  <!-- Stats & Highlight Overview (Modified: Removed 99.4% Verification Rate) -->
-  <section class="container" style="margin-top: 4rem;">
-    <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-number">12</div>
-        <div class="stat-label">Tutors · sample data</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">120</div>
-        <div class="stat-label">Students · sample data</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">60</div>
-        <div class="stat-label">Bookings · sample data</div>
-      </div>
-    </div>
-  </section>
 
   <!-- How It Works Section -->
   <section class="section section-bg-light" id="how-it-works">
@@ -153,7 +122,7 @@ $footerFaq = 'chatbot.php';
           <div class="step-icon flex-center"><i class="fas fa-search"></i></div>
           <h3 class="step-title">1. Search & Filter Tutors</h3>
           <p class="step-desc">
-            Browse verified tutors based on pricing, timing, location, gender, and specialized course types like Tajweed or Memorization.
+            Browse verified tutors by name, teaching information, hourly rate, mode and state.
           </p>
         </div>
 
@@ -186,7 +155,7 @@ $footerFaq = 'chatbot.php';
       <div class="cta-container">
         <h2 class="cta-title">Start Your Quranic Journey</h2>
         <p class="cta-desc">
-          Sign up today as a student to book a trial class, or register as a certified tutor to start teaching and earning across Malaysia.
+          Sign up today as a student to book a lesson, or register as a certified tutor to start teaching and earning across Malaysia.
         </p>
         <div class="cta-actions">
           <a href="register.php#student-registration" class="btn btn-light" id="cta-student-register">Register as Student</a>

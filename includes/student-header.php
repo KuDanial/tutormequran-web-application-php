@@ -1,4 +1,3 @@
-<?php require_once __DIR__ . '/profiles.php'; $headerProfile=tmq_profile_user((int)$authUser['user_id']); ?>
 <nav class="navbar" id="navbar">
     <div class="container nav-container">
       <a href="../index.php" class="logo-link" id="nav-logo">
@@ -30,15 +29,15 @@
 <a href="student-profile-view.php">My Profile</a>
 <a href="student-notifications.php">Notifications</a>
 <details class="student-menu-sub"><summary>Invoice</summary><div>
-<a href="student-invoices.php#pending">Pending</a>
-<a href="student-invoices.php#receipts">Receipts</a>
+<a href="student-invoices.php">Lesson charges</a>
+<a href="student-invoices.php">Receipts</a>
 </div></details>
 </section>
 <section class="student-menu-group" aria-labelledby="menu-management">
 <h2 id="menu-management">Management</h2>
 <details class="student-menu-sub"><summary>My Bookings</summary><div>
-<a href="student-bookings.php#pending">Pending bookings</a>
-<a href="student-bookings.php#past">Past bookings</a>
+<a href="student-bookings.php?status=requested">Pending bookings</a>
+<a href="student-bookings.php">All bookings</a>
 </div></details>
 <a href="student-feedbacks.php">My Feedbacks</a>
 </section>

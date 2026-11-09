@@ -49,9 +49,26 @@ try {
     }
     if(!empty($_SESSION['profile_saved'])){unset($_SESSION['profile_saved']);$profileSuccess=true;$profileMessage='Changes saved.';}
 }catch(DomainException $e){if(!in_array(http_response_code(),[403,413],true)){http_response_code(422);}$profileMessage=$e->getMessage();}
-catch(Throwable $e){http_response_code(503);$profileMessage='This update is temporarily unavailable. Please try again later.';}
-$editable=$profile?tmq_profile_settings($profile['role']):[];
-$missing=isset($profile['tutor_id'])?tmq_profile_missing($profile):[];
-$applicationApproved=(bool)array_filter($certificateHistory,fn($c)=>$c['status']==='approved');
-$applicationStatus=$applicationApproved?'approved':($certificateHistory[0]['status']??'No certificate submitted yet');
+catch(Throwable $e){http_response_code(503);exit('Profiles are temporarily unavailable. Please try again later.');}
+try {
+    // Complete view reads before emitting markup, so failures cannot expose PDO diagnostics.
+    $editable=$profile?tmq_profile_settings($profile['role']):[];
+    $missing=isset($profile['tutor_id'])?tmq_profile_missing($profile):[];
+    $applicationApproved=(bool)array_filter($certificateHistory,fn($c)=>$c['status']==='approved');
+    $applicationStatus=$applicationApproved?'approved':($certificateHistory[0]['status']??'No certificate submitted yet');
+    if($profilePage==='admin-settings.php'){
+        $settingsByRole=['student'=>tmq_profile_settings('student'),'tutor'=>tmq_profile_settings('tutor')];
+    }
+    if(in_array($profilePage,['tutor-profile-setup.php','tutor-profile-edit.php','manage-tutors-edit.php'],true)){
+        $profileChoiceRows=['languages'=>tmq_profile_rows('SELECT language_id AS id,name FROM languages ORDER BY language_id'),
+            'focuses'=>tmq_profile_rows('SELECT focus_id AS id,name FROM lesson_focuses ORDER BY focus_id')];
+    }
+    if($profilePage==='manage-certificates.php'){
+        $profileRows=tmq_profile_rows("SELECT c.*,u.first_name,u.last_name,u.email FROM certificates c JOIN tutors t ON t.tutor_id=c.tutor_id JOIN users u ON u.user_id=t.user_id ORDER BY (c.status='pending') DESC,c.certificate_id DESC");
+    }
+    if($profilePage==='manage-tutors.php'){
+        $profileRows=[];
+        foreach(tmq_profile_rows('SELECT tutor_id FROM tutors ORDER BY tutor_id') as $row){$profileRows[]=tmq_profile_tutor((int)$row['tutor_id']);}
+    }
+}catch(Throwable $e){http_response_code(503);exit('Profiles are temporarily unavailable. Please try again later.');}
 require_once __DIR__ . '/profile-view-helpers.php';

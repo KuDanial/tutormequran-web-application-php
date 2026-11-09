@@ -46,7 +46,7 @@ $footerFaq = 'chatbot.php';
 <label for="f-filterRate"><i class="fas fa-money-bill-wave" aria-hidden="true"></i> Hourly Budget</label>
 <div class="search-input-wrapper">
 <i class="fas fa-ring" aria-hidden="true"></i>
-<select id="f-filterRate" name="filterRate"><option value="" <?= tmq_input($_GET, 'filterRate') === '' ? 'selected' : '' ?>>Any rate</option><option value="below30" <?= tmq_input($_GET, 'filterRate') === 'below30' ? 'selected' : '' ?>>Below RM 30</option><option value="30to50" <?= tmq_input($_GET, 'filterRate') === '30to50' ? 'selected' : '' ?>>RM 30?50</option><option value="above50" <?= tmq_input($_GET, 'filterRate') === 'above50' ? 'selected' : '' ?>>Above RM 50</option></select>
+<select id="f-filterRate" name="filterRate"><option value="" <?= tmq_input($_GET, 'filterRate') === '' ? 'selected' : '' ?>>Any rate</option><option value="below30" <?= tmq_input($_GET, 'filterRate') === 'below30' ? 'selected' : '' ?>>Below RM 30</option><option value="30to50" <?= tmq_input($_GET, 'filterRate') === '30to50' ? 'selected' : '' ?>>RM 30–50</option><option value="above50" <?= tmq_input($_GET, 'filterRate') === 'above50' ? 'selected' : '' ?>>Above RM 50</option></select>
 </div>
 </div>
 <button type="submit" class="btn btn-primary btn-sm">Search Tutors</button>
@@ -54,11 +54,11 @@ $footerFaq = 'chatbot.php';
 </form>
 </section>
 <div class="results-heading">
-<h2>Available to book</h2><span>1 public tutor · sample directory</span>
+<h2>Public tutors</h2><?php if (!$publicError): ?><span><?= count($publicTutors) ?> matching profiles</span><?php endif; ?>
 </div>
 <?php if($publicError): ?><aside class="flow-notice warm"><p><?= tmq_escape($publicError) ?></p></aside><?php endif; ?>
 <?php foreach($publicTutors as $t): ?>
-<article class="portal-card tutor-listing"><div class="tutor-portrait"><img class="profile-photo" src="<?= tmq_escape(tmq_photo_url($t)) ?>" width="160" height="160" alt="Tutor profile picture"><small>QURAN TEACHING</small></div><div class="listing-content"><span class="portal-badge good">Verified</span><h2><?= tmq_escape(tmq_public_name($t)) ?></h2><p class="listing-specialty"><?= tmq_escape(implode(' · ',array_column($t['focuses'],'name'))) ?></p><p><?= tmq_escape($t['bio']) ?></p><div class="listing-meta"><span><?= tmq_escape($t['teaching_state']) ?></span><span><?= tmq_escape(ucfirst($t['teaching_mode'])) ?></span></div></div><div class="listing-book"><strong>RM <?= tmq_escape($t['hourly_rate']) ?><span>/ hour</span></strong><p>Lesson availability will be added later.</p><a href="tutor-detail.php?id=<?= (int)$t['tutor_id'] ?>" class="btn btn-primary btn-sm">View profile</a></div></article>
+<article class="portal-card tutor-listing"><div class="tutor-portrait"><img class="profile-photo" src="<?= tmq_escape(tmq_photo_url($t)) ?>" width="160" height="160" alt="Tutor profile picture"><small>QURAN TEACHING</small></div><div class="listing-content"><span class="portal-badge good">Verified</span><h2><?= tmq_escape(tmq_public_name($t)) ?></h2><p class="listing-specialty"><?= tmq_escape(implode(' · ',array_column($t['focuses'],'name'))) ?></p><p><?= tmq_escape($t['bio']) ?></p><div class="listing-meta"><span><?= tmq_escape($t['teaching_state']) ?></span><span><?= tmq_escape(ucfirst($t['teaching_mode'])) ?></span></div></div><div class="listing-book"><strong>RM <?= tmq_escape($t['hourly_rate']) ?><span>/ hour</span></strong><p>View the profile to select an available lesson.</p><a href="tutor-detail.php?id=<?= (int)$t['tutor_id'] ?>" class="btn btn-primary btn-sm">View profile</a></div></article>
 <?php endforeach; if(!$publicTutors && !$publicError): ?><section class="portal-card"><h2>No tutors to display</h2><p>No public tutor profiles match these filters yet.</p></section><?php endif; ?>
 <aside class="flow-notice info"><strong>Every public listing starts with verification</strong>
 <p>Tutors apply with an Ijazah certificate. After admin approval, they complete their profile and choose whether to publish. Draft and Private profiles are not listed.</p>

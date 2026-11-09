@@ -21,11 +21,10 @@ function tmq_profile_options(string $name,array $values): string
 }
 function tmq_profile_choices(string $name): void
 {
-    global $profile;
-    [$table,$key]=$name==='languages'?['languages','language_id']:['lesson_focuses','focus_id'];
+    global $profile,$profileChoiceRows;
     $disabled=tmq_profile_disabled($name);$selected=array_map('intval',array_column($profile[$name]??[],'id'));
     if(!$disabled){echo '<input type="hidden" name="'.$name.'_present" value="1">';}
-    foreach(tmq_profile_rows("SELECT `$key` AS id,name FROM `$table` ORDER BY `$key`") as $row){echo '<label class="lesson-tag"><input type="checkbox" name="'.$name.'[]" value="'.(int)$row['id'].'"'.(in_array((int)$row['id'],$selected,true)?' checked':'').$disabled.'> '.tmq_escape($row['name']).'</label>';}
+    foreach($profileChoiceRows[$name] as $row){echo '<label class="lesson-tag"><input type="checkbox" name="'.$name.'[]" value="'.(int)$row['id'].'"'.(in_array((int)$row['id'],$selected,true)?' checked':'').$disabled.'> '.tmq_escape($row['name']).'</label>';}
 }
 function tmq_profile_detail(string $label): string
 {

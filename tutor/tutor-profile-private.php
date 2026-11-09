@@ -23,7 +23,7 @@ $footerFaq = 'tutor-faq.php';
 </header>
 <?php tmq_profile_notice(); ?>
 <aside class="flow-notice warm"><strong><?= isset($profile['tutor_id']) && tmq_public_tutor($profile) ? 'Listed in tutor search' : 'Not listed in tutor search' ?></strong>
-<p>Public listing depends on your saved visibility and profile requirements. Booking features will be available in a later phase.</p>
+<p>Public listing depends on your saved visibility and profile requirements. Students can request lessons from eligible public profiles.</p>
 </aside>
 <section class="portal-card ">
 <h2>Profile visibility</h2>
