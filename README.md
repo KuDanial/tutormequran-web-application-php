@@ -120,5 +120,5 @@ All 99 original HTML pages remain in place as frontend references. Active links 
 
 ## Author
 
-**Tengku Ahmad Danial Tengku Noor Ashraf** · [@KuDanial](https://github.com/KuDanial)  
-Universiti Teknologi MARA · CSP600 academic project
+[@KuDanial](https://github.com/KuDanial)  
+CSP600 academic project
