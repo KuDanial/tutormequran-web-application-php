@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&amp;logo=html5&amp;logoColor=white" alt="HTML5">
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&amp;logo=css&amp;logoColor=white" alt="CSS3">
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&amp;logo=javascript&amp;logoColor=black" alt="JavaScript">
-  <img src="https://img.shields.io/badge/Status-Interface%20Prototype-0D9488?style=flat-square" alt="Status: Interface prototype">
+  <img src="https://img.shields.io/badge/Status-PHP%20Application-0D9488?style=flat-square" alt="Status: PHP application">
   <img src="https://img.shields.io/badge/UiTM-CSP600/CSP650-6D28D9?style=flat-square" alt="UiTM CSP600 project">
 </p>
 
@@ -25,17 +25,16 @@
 
 TutorMeQuran is a CSP600 academic project at Universiti Teknologi MARA (UiTM). It brings tutor discovery, certificate review, lesson booking and payment tracking into one interface for students, tutors and administrators.
 
-This repository currently contains the **PHP-rendered interface prototype (Phase 1)**. Shared PHP includes render the approved interface. Selected interactions work locally in the browser; authentication, database integration and form processing are still future work. Displayed accounts, bookings and reports use sample data.
+The application is a PHP and MySQL Quran tutor booking platform. It includes account registration and authentication, tutor applications and verification, booking coordination, chat, support requests, payment receipt submission and review, FAQs, feedback and reporting. The database schema and setup scripts are in `database/`; connection and upload helpers are in `config/`.
 
 ## Features
 
 | Area | Included screens and interactions |
 | --- | --- |
-| Students | Tutor search, registration, profile editing, pending and past bookings, invoices, receipt upload and feedback |
-| Tutors | Application and certificate status, profile and visibility settings, availability, booking acceptance/rejection, DuitNow QR management and payment acknowledgement |
-| Administrators | Tutor certificate review, student and tutor management, booking management, payment review and FAQ management |
-| Reports | Dashboard with comparison and composition reports |
-| Support | Help Centre, support request forms, contact options and FAQs |
+| Students | Tutor search, registration, profile editing, bookings, invoices, receipt upload, chat and feedback |
+| Tutors | Applications and certificate status, profile and availability, booking decisions, DuitNow QR management and payment acknowledgement |
+| Administrators | Tutor verification, student and tutor management, bookings, payment review and FAQ management |
+| Reports and support | Comparison and composition reports, Help Centre, support requests and FAQs |
 | Usability | Shared progress indicators, grouped account menus, destructive-action confirmations, keyboard navigation and reduced-motion support |
 
 ## Booking journey
@@ -49,16 +48,16 @@ This repository currently contains the **PHP-rendered interface prototype (Phase
 
 Tutor acknowledgement and admin verification are separate stages. DuitNow transfers take place outside the website; the prototype does not process money or verify bank transactions automatically.
 
-## Run locally
+## Setup and run locally
 
-Serve the project with PHP (XAMPP PHP is suitable):
+Requirements: PHP with MySQLi and the MySQLi, file upload and session features enabled, plus MySQL or MariaDB. Create a database and import `database/tutormequran.sql`. Configure the database connection in `config/database.php`; review `config/uploads.php` and ensure the configured upload directory is writable by PHP. Then serve the project with PHP (XAMPP PHP is suitable):
 
 ```powershell
 cd C:\Users\aster\Documents\GitHub\tutormequran-web-application-php
 & C:\xampp\php\php.exe -S 127.0.0.1:8000 -t .
 ```
 
-Open [localhost:8000/index.php](http://localhost:8000/index.php). No build step, database or package installation is required. A static Python/Live Server cannot execute PHP. Alternatively serve the project with XAMPP Apache under its document root; `.htaccess` selects `index.php` as the directory entry point.
+Open [localhost:8000/index.php](http://localhost:8000/index.php). A static Python/Live Server cannot execute PHP. Alternatively serve the project with XAMPP Apache under its document root; `.htaccess` selects `index.php` as the directory entry point. For admin account setup, see `scripts/create_admin.php` and its usage instructions before running it.
 
 Use the same browser tab when checking related student and tutor booking screens: selected prototype actions share `sessionStorage` in that tab. They do not sync between users, tabs or devices. A local HTTP server provides more consistent browser storage behaviour than opening files directly.
 
